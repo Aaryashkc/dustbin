@@ -358,7 +358,7 @@ const Reports = () => {
                   <p className="text-xs text-red-600/70 mt-1">These districts were skipped due to resource shortages.</p>
                 </div>
                 {reasonBreakdown.map((r, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-primary/[0.02]">
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-primary/2">
                     <span className="text-sm text-primary/70 max-w-[70%]">{r.reason}</span>
                     <span className="text-lg font-bold text-red-600">{r.count}</span>
                   </div>
@@ -376,7 +376,7 @@ const Reports = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-primary/8 bg-primary/[0.03]">
+                  <tr className="border-b border-primary/8 bg-primary/3">
                     <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase">Date</th>
                     <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase">District</th>
                     <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase">Type</th>
@@ -395,7 +395,7 @@ const Reports = () => {
                     </tr>
                   ) : (
                     incompleteDistricts.map((d, i) => (
-                      <tr key={i} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors">
+                      <tr key={i} className="border-b border-primary/5 hover:bg-primary/2 transition-colors">
                         <td className="px-5 py-3 text-sm text-primary/60">{d.date}</td>
                         <td className="px-5 py-3 font-semibold text-primary text-sm">{d.district}</td>
                         <td className="px-5 py-3">
@@ -414,7 +414,7 @@ const Reports = () => {
                             d.action === "skip" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
                           }`}>{d.action}</span>
                         </td>
-                        <td className="px-5 py-3 text-xs text-red-600 font-medium max-w-[200px]">{d.reason}</td>
+                        <td className="px-5 py-3 text-xs text-red-600 font-medium max-w-50">{d.reason}</td>
                       </tr>
                     ))
                   )}

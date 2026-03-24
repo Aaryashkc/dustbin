@@ -175,7 +175,7 @@ export default function TaskFlow() {
             <h1 className="text-2xl sm:text-4xl font-bold text-primary">
               {page === 1 ? "Update Status" : "Task Execution"}
             </h1>
-            <div className="mt-2 h-[3px] w-48 bg-[var(--accent)] rounded-full" />
+            <div className="mt-2 h-0.75 w-48 bg-accent rounded-full" />
           </div>
 
           <button
@@ -294,12 +294,12 @@ function UpdateStatusUI({ pickup, currentStatus, statusUpdating, onUpdateStatus,
               const isCurrent = currentStatus === step;
               return (
                 <div key={step} className="flex items-center">
-                  <div className="flex flex-col items-center min-w-[80px]">
+                  <div className="flex flex-col items-center min-w-20">
                     <span
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${isCurrent
                           ? "bg-primary text-white ring-4 ring-primary/20"
                           : isDone
-                            ? "bg-[var(--accent)] text-white"
+                            ? "bg-accent text-white"
                             : "bg-gray-200 text-gray-500"
                         }`}
                     >
@@ -310,7 +310,7 @@ function UpdateStatusUI({ pickup, currentStatus, statusUpdating, onUpdateStatus,
                     </span>
                   </div>
                   {idx < 3 && (
-                    <div className={`h-0.5 w-8 sm:w-12 ${isDone ? "bg-[var(--accent)]" : "bg-gray-200"}`} />
+                    <div className={`h-0.5 w-8 sm:w-12 ${isDone ? "bg-accent" : "bg-gray-200"}`} />
                   )}
                 </div>
               );
@@ -399,18 +399,18 @@ function TaskExecutionUI({
               <label
                 key={item.key}
                 className={`flex items-center gap-3 border rounded-xl px-4 py-3 select-none transition-all ${checks[item.key]
-                    ? "border-[var(--accent)] bg-[var(--accent)]/5"
+                    ? "border-accent bg-accent/5"
                     : "border-primary/20"
-                  } ${isCompleted ? "opacity-70 cursor-not-allowed" : "cursor-pointer hover:border-[var(--accent)]"}`}
+                  } ${isCompleted ? "opacity-70 cursor-not-allowed" : "cursor-pointer hover:border-accent"}`}
               >
                 <input
                   type="checkbox"
                   checked={!!checks[item.key]}
                   disabled={isCompleted}
                   onChange={() => onToggle(item.key)}
-                  className="w-4 h-4 accent-[var(--accent)]"
+                  className="w-4 h-4 accent-accent"
                 />
-                <span className={`text-sm font-medium ${checks[item.key] ? "text-[var(--accent)]" : "text-primary"}`}>
+                <span className={`text-sm font-medium ${checks[item.key] ? "text-accent" : "text-primary"}`}>
                   {item.label}
                 </span>
               </label>
@@ -421,7 +421,7 @@ function TaskExecutionUI({
           <div className="mt-4">
             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[var(--accent)] transition-all duration-300"
+                className="h-full bg-accent transition-all duration-300"
                 style={{ width: `${(Object.values(checks).filter(Boolean).length / checkItems.length) * 100}%` }}
               />
             </div>
@@ -442,7 +442,7 @@ function TaskExecutionUI({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className="text-xs font-semibold text-primary/60">CATEGORY</p>
-              <p className="mt-1 font-semibold text-[var(--accent)]">
+              <p className="mt-1 font-semibold text-accent">
                 {category.toUpperCase()}
               </p>
             </div>

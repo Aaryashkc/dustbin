@@ -61,7 +61,7 @@ function MapSearchControl({ onLocationSelect }) {
   }, [isOpen]);
 
   return (
-    <div className="absolute top-4 right-4 z-[1000] bg-white rounded-lg shadow-lg">
+    <div className="absolute top-4 right-4 z-1000 bg-white rounded-lg shadow-lg">
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
@@ -128,7 +128,7 @@ function DriverFoundCard({ driverInfo, assignedAt }) {
     <div className="bg-white rounded-2xl border border-primary/15 shadow-sm overflow-hidden mt-4">
       <div className="px-5 py-4 bg-[#e8f5e2] border-b border-primary/15 flex items-center gap-3">
         {/* Green checkmark */}
-        <span className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+        <span className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0">
           <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
@@ -343,7 +343,7 @@ function SearchPage() {
       <main className="app-container">
         {/* Map Area */}
         <section className="bg-white rounded-2xl overflow-hidden border border-black/10 shadow-sm">
-          <div className="h-[320px] md:h-[360px] w-full bg-black/5 relative">
+          <div className="h-80 md:h-90 w-full bg-black/5 relative">
             <MapSearchControl onLocationSelect={handleMapSearchSelect} />
             <MapContainer
               center={mapCenter}
@@ -370,7 +370,7 @@ function SearchPage() {
                 <h2 className="text-2xl sm:text-3xl font-semibold text-black mb-1">
                   Set Pickup Location
                 </h2>
-                <p className="text-[var(--accent)] text-sm mb-5">{addressLabel}</p>
+                <p className="text-accent text-sm mb-5">{addressLabel}</p>
                 <div className="flex gap-4">
                   <button
                     onClick={() => navigate(-1)}
@@ -397,11 +397,11 @@ function SearchPage() {
               <>
                 <div className="flex items-center gap-3 mb-1">
                   <span className="inline-flex">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent)] animate-ping" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent animate-ping" />
                   </span>
                   <h2 className="text-2xl sm:text-3xl font-semibold text-black">Searching for drivers…</h2>
                 </div>
-                <p className="text-[var(--accent)] text-sm mb-5">{addressLabel}</p>
+                <p className="text-accent text-sm mb-5">{addressLabel}</p>
                 <button
                   onClick={handleCancelSearching}
                   className="border-2 border-primary text-primary px-8 py-3 rounded-2xl bg-transparent hover:bg-white active:scale-95 transition"
@@ -417,12 +417,12 @@ function SearchPage() {
                 <div className="flex items-baseline gap-4 mb-1">
                   <h2 className="text-2xl sm:text-3xl font-semibold text-black">DRIVER FOUND</h2>
                   {driverInfo?.licensePlate && (
-                    <span className="text-[var(--accent)] text-sm font-medium">
+                    <span className="text-accent text-sm font-medium">
                       {driverInfo.licensePlate}
                     </span>
                   )}
                 </div>
-                <p className="text-[var(--accent)] text-sm mb-1">Truck is on its way. Be Patient.</p>
+                <p className="text-accent text-sm mb-1">Truck is on its way. Be Patient.</p>
                 {canCancel && (
                   <p className="text-primary/80 text-sm mb-4">
                     Cancel within{" "}
@@ -460,7 +460,7 @@ function SearchPage() {
             {flow === "cancelled" && (
               <>
                 <h2 className="text-2xl sm:text-3xl font-semibold text-black mb-2">Request Cancelled</h2>
-                <p className="text-[var(--accent)] text-sm mb-5">
+                <p className="text-accent text-sm mb-5">
                   Your pickup request was cancelled or expired. Please try again.
                 </p>
                 <button

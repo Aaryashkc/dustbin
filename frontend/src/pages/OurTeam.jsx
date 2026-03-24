@@ -35,7 +35,7 @@ const TEAM = [
         role: 'CEO & Founder',
         bio: 'Passionate about sustainable cities and smart infrastructure.',
         avatar: '👨‍💼',
-        color: 'bg-[#354f52]',
+        color: 'bg-primary',
     },
 ];
 
@@ -45,12 +45,12 @@ export default function OurTeam() {
             {/* Hero */}
             <section className="py-20 sm:py-28 px-4 text-center">
                 <FadeIn>
-                    <span className="inline-block px-4 py-1.5 bg-[#354f52]/10 text-[#354f52] rounded-full text-sm font-semibold mb-6 tracking-wide">
+                    <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-6 tracking-wide">
                         Our Team
                     </span>
                 </FadeIn>
                 <FadeIn delay={100}>
-                    <h1 className="font-['Outfit',sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold text-[#354f52] leading-tight mb-6">
+                    <h1 className="font-['Outfit',sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-tight mb-6">
                         Meet the <span className="text-[#296200]">People</span><br />
                         Behind SafaBin
                     </h1>
@@ -73,7 +73,7 @@ export default function OurTeam() {
                                     {member.avatar}
                                 </div>
 
-                                <h3 className="font-['Outfit',sans-serif] font-bold text-xl text-[#354f52] mb-1">
+                                <h3 className="font-['Outfit',sans-serif] font-bold text-xl text-primary mb-1">
                                     {member.name}
                                 </h3>
                                 <p className="text-[#296200] font-medium text-sm mb-3">{member.role}</p>
@@ -87,7 +87,7 @@ export default function OurTeam() {
             {/* Join CTA */}
             <section className="pb-20 sm:pb-28 px-4">
                 <FadeIn>
-                    <div className="max-w-3xl mx-auto bg-[#354f52] rounded-2xl p-8 sm:p-12 text-center">
+                    <div className="max-w-3xl mx-auto bg-primary rounded-2xl p-8 sm:p-12 text-center">
                         <h2 className="font-['Outfit',sans-serif] text-2xl sm:text-3xl font-bold text-white mb-4">
                             Want to Join Our Mission?
                         </h2>
@@ -96,7 +96,7 @@ export default function OurTeam() {
                         </p>
                         <a
                             href="mailto:careers@safabin.com"
-                            className="inline-flex items-center px-6 py-3 bg-white text-[#354f52] font-semibold rounded-xl hover:bg-white/90 transition active:scale-95"
+                            className="inline-flex items-center px-6 py-3 bg-white text-primary font-semibold rounded-xl hover:bg-white/90 transition active:scale-95"
                         >
                             Get in Touch
                         </a>

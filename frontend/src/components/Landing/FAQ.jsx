@@ -14,7 +14,7 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
           {question}
         </span>
         <X
-          className={`w-6 h-6 flex-shrink-0 transition-transform ${
+          className={`w-6 h-6 shrink-0 transition-transform ${
             isOpen ? 'rotate-0' : 'rotate-45'
           }`}
         />
@@ -64,7 +64,7 @@ export function FAQ() {
 
   return (
     <section className="bg-white w-full py-16 md:py-24 px-8 md:px-16 lg:px-24">
-      <div className="max-w-[768px] mx-auto">
+      <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12 space-y-6">
           <h2 className="font-['Outfit'] font-bold text-black text-4xl md:text-5xl">
             FAQ

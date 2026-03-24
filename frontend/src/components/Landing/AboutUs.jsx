@@ -1,12 +1,12 @@
 export function AboutSection() {
   return (
     <section className="bg-white w-full py-10 md:py-16 px-8 md:px-16 lg:px-24">
-      <div className="max-w-[1440px] mx-auto">
+      <div className="max-w-360 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <div>
-            <h2 className="font-['Outfit'] font-bold text-[#354f52] text-3xl md:text-4xl mb-6">
+            <h2 className="font-['Outfit'] font-bold text-primary text-3xl md:text-4xl mb-6">
               Custom, tech-enabled environmental services{' '}
-              <span className="bg-gradient-to-r from-[#57a521] to-[#296200] bg-clip-text" style={{ WebkitTextFillColor: 'transparent' }}>
+              <span className="bg-linear-to-r from-[#57a521] to-[#296200] bg-clip-text" style={{ WebkitTextFillColor: 'transparent' }}>
                 for your business and Home
               </span>
             </h2>
@@ -20,7 +20,7 @@ export function AboutSection() {
         
         {/* Gradient divider */}
         <div className="mt-12">
-          <div className="h-[7px] w-full bg-gradient-to-r from-[#57A521] to-[#296200] rounded-full"></div>
+          <div className="h-1.75 w-full bg-linear-to-r from-[#57A521] to-[#296200] rounded-full"></div>
         </div>
       </div>
     </section>

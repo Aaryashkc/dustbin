@@ -29,7 +29,7 @@ const Unauthorized = () => {
                     </svg>
                 </div>
 
-                <h1 className="font-['Outfit',sans-serif] text-3xl sm:text-4xl font-bold text-[#354f52] mb-3">
+                <h1 className="font-['Outfit',sans-serif] text-3xl sm:text-4xl font-bold text-primary mb-3">
                     Access Denied
                 </h1>
 
@@ -46,7 +46,7 @@ const Unauthorized = () => {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <button
                         onClick={handleGoBack}
-                        className="inline-flex items-center justify-center px-6 py-3 bg-[#354f52] text-white font-semibold rounded-xl hover:bg-[#2a3f41] transition-colors focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2"
+                        className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-[#2a3f41] transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     >
                         {isAuthenticated ? 'Go to Dashboard' : 'Go to Login'}
                     </button>
@@ -54,7 +54,7 @@ const Unauthorized = () => {
                     {isAuthenticated && (
                         <button
                             onClick={handleLogout}
-                            className="inline-flex items-center justify-center px-6 py-3 border-2 border-[#354f52] text-[#354f52] font-semibold rounded-xl hover:bg-[#354f52]/5 transition-colors focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2"
+                            className="inline-flex items-center justify-center px-6 py-3 border-2 border-primary text-primary font-semibold rounded-xl hover:bg-primary/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         >
                             Logout
                         </button>

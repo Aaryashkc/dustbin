@@ -139,7 +139,7 @@ const History = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-primary/[0.04] rounded-2xl p-1.5">
+      <div className="flex gap-1 bg-primary/4 rounded-2xl p-1.5">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -278,7 +278,7 @@ const History = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-primary/[0.03] border-b border-primary/10">
+                    <tr className="bg-primary/3 border-b border-primary/10">
                       <th className="px-4 py-3 text-xs font-semibold text-primary/60 uppercase tracking-wider">Date</th>
                       <th className="px-4 py-3 text-xs font-semibold text-primary/60 uppercase tracking-wider">Customer</th>
                       <th className="px-4 py-3 text-xs font-semibold text-primary/60 uppercase tracking-wider">Driver</th>
@@ -293,7 +293,7 @@ const History = () => {
                   </thead>
                   <tbody className="divide-y divide-primary/5">
                     {pickups.map((p) => (
-                      <tr key={p._id} className="hover:bg-primary/[0.02] transition">
+                      <tr key={p._id} className="hover:bg-primary/2 transition">
                         <td className="px-4 py-3 text-sm text-primary/70 whitespace-nowrap">
                           {new Date(p.createdAt).toLocaleDateString("en-US", {
                             month: "short", day: "numeric", year: "numeric",
@@ -341,7 +341,7 @@ const History = () => {
                             {p.level}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-primary/70 max-w-[200px] truncate">
+                        <td className="px-4 py-3 text-sm text-primary/70 max-w-50 truncate">
                           {p.district ? `${p.district}${p.province ? `, ${p.province}` : ""}` : p.location?.address || "—"}
                         </td>
                         {isSuperAdmin && (
@@ -446,19 +446,19 @@ const History = () => {
 
                     {/* Stats */}
                     <div className="flex flex-wrap gap-2 sm:ml-auto">
-                      <div className="px-3 py-1.5 rounded-xl bg-primary/[0.04] text-center min-w-[70px]">
+                      <div className="px-3 py-1.5 rounded-xl bg-primary/4 text-center min-w-17.5">
                         <p className="text-lg font-bold text-primary">{c.totalPickups}</p>
                         <p className="text-[10px] text-primary/50 font-medium uppercase">Total</p>
                       </div>
-                      <div className="px-3 py-1.5 rounded-xl bg-emerald-50 text-center min-w-[70px]">
+                      <div className="px-3 py-1.5 rounded-xl bg-emerald-50 text-center min-w-17.5">
                         <p className="text-lg font-bold text-emerald-600">{c.completed}</p>
                         <p className="text-[10px] text-emerald-600/70 font-medium uppercase">Done</p>
                       </div>
-                      <div className="px-3 py-1.5 rounded-xl bg-red-50 text-center min-w-[70px]">
+                      <div className="px-3 py-1.5 rounded-xl bg-red-50 text-center min-w-17.5">
                         <p className="text-lg font-bold text-red-500">{c.cancelled}</p>
                         <p className="text-[10px] text-red-500/70 font-medium uppercase">Cancel</p>
                       </div>
-                      <div className="px-3 py-1.5 rounded-xl bg-blue-50 text-center min-w-[70px]">
+                      <div className="px-3 py-1.5 rounded-xl bg-blue-50 text-center min-w-17.5">
                         <p className="text-lg font-bold text-blue-600">{c.active}</p>
                         <p className="text-[10px] text-blue-600/70 font-medium uppercase">Active</p>
                       </div>
@@ -539,19 +539,19 @@ const History = () => {
 
                     {/* Stats */}
                     <div className="flex flex-wrap gap-2 sm:ml-auto">
-                      <div className="px-3 py-1.5 rounded-xl bg-primary/[0.04] text-center min-w-[70px]">
+                      <div className="px-3 py-1.5 rounded-xl bg-primary/4 text-center min-w-17.5">
                         <p className="text-lg font-bold text-primary">{d.totalPickups}</p>
                         <p className="text-[10px] text-primary/50 font-medium uppercase">Total</p>
                       </div>
-                      <div className="px-3 py-1.5 rounded-xl bg-emerald-50 text-center min-w-[70px]">
+                      <div className="px-3 py-1.5 rounded-xl bg-emerald-50 text-center min-w-17.5">
                         <p className="text-lg font-bold text-emerald-600">{d.completed}</p>
                         <p className="text-[10px] text-emerald-600/70 font-medium uppercase">Done</p>
                       </div>
-                      <div className="px-3 py-1.5 rounded-xl bg-red-50 text-center min-w-[70px]">
+                      <div className="px-3 py-1.5 rounded-xl bg-red-50 text-center min-w-17.5">
                         <p className="text-lg font-bold text-red-500">{d.cancelled}</p>
                         <p className="text-[10px] text-red-500/70 font-medium uppercase">Cancel</p>
                       </div>
-                      <div className="px-3 py-1.5 rounded-xl bg-blue-50 text-center min-w-[70px]">
+                      <div className="px-3 py-1.5 rounded-xl bg-blue-50 text-center min-w-17.5">
                         <p className="text-lg font-bold text-blue-600">{d.active}</p>
                         <p className="text-[10px] text-blue-600/70 font-medium uppercase">Active</p>
                       </div>

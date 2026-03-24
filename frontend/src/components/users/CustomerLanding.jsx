@@ -77,7 +77,7 @@ function CustomerLandingPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-16 sm:pb-24">
         <section className="lp-reveal lp-delay-0 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 rounded-3xl border border-[#355157]/15 bg-white/85 backdrop-blur p-6 sm:p-8 shadow-[0_24px_40px_rgba(53,81,87,0.12)]">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#354f52]/20 bg-white px-4 py-2 text-sm font-['Manrope',sans-serif] font-semibold text-[#2f5e61]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white px-4 py-2 text-sm font-['Manrope',sans-serif] font-semibold text-[#2f5e61]">
               Customer Portal
             </span>
 
@@ -92,14 +92,14 @@ function CustomerLandingPage() {
             <div className="mt-8 flex flex-wrap gap-4">
               <button
                 onClick={handleGetStarted}
-                className="bg-[#213a3d] text-[#f7f4ec] px-7 py-3.5 rounded-2xl hover:bg-[#162729] transition-all active:scale-95 transform focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2 shadow-[0_16px_30px_rgba(33,58,61,0.2)] font-['Manrope',sans-serif] font-semibold text-base sm:text-lg"
+                className="bg-[#213a3d] text-[#f7f4ec] px-7 py-3.5 rounded-2xl hover:bg-[#162729] transition-all active:scale-95 transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-[0_16px_30px_rgba(33,58,61,0.2)] font-['Manrope',sans-serif] font-semibold text-base sm:text-lg"
               >
                 Open Dashboard
               </button>
 
               <button
                 onClick={handleLearnMore}
-                className="border-2 border-[#213a3d]/45 bg-white/70 backdrop-blur px-7 py-3.5 rounded-2xl hover:bg-[#213a3d] hover:text-[#f7f4ec] transition-all active:scale-95 transform focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2 font-['Manrope',sans-serif] font-semibold text-base sm:text-lg"
+                className="border-2 border-[#213a3d]/45 bg-white/70 backdrop-blur px-7 py-3.5 rounded-2xl hover:bg-[#213a3d] hover:text-[#f7f4ec] transition-all active:scale-95 transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 font-['Manrope',sans-serif] font-semibold text-base sm:text-lg"
               >
                 Learn More
               </button>
@@ -171,7 +171,7 @@ function CustomerLandingPage() {
         {/* Toggle Button */}
         <button
           onClick={toggleMenu}
-          className={`bg-[#354f52] text-white w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center hover:bg-[#2a3f41] transition-all shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2 ${isMenuOpen ? 'rotate-45' : 'rotate-0'
+          className={`bg-primary text-white w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center hover:bg-[#2a3f41] transition-all shadow-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${isMenuOpen ? 'rotate-45' : 'rotate-0'
             }`}
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMenuOpen}

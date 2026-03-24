@@ -104,7 +104,7 @@ const Drivers = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-primary/8 bg-primary/[0.03]">
+                <tr className="border-b border-primary/8 bg-primary/3">
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Name</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Email</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Phone</th>
@@ -118,7 +118,7 @@ const Drivers = () => {
                 {drivers.length === 0 ? (
                   <tr><td colSpan={isSuperAdmin ? 7 : 6} className="px-6 py-12 text-center text-primary/30 text-sm">No drivers found.</td></tr>
                 ) : drivers.map(d => (
-                  <tr key={d.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors">
+                  <tr key={d.id} className="border-b border-primary/5 hover:bg-primary/2 transition-colors">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center text-xs font-bold text-primary shrink-0">{d.name?.charAt(0)?.toUpperCase() || "?"}</div>

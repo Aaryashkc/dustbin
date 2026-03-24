@@ -55,7 +55,7 @@ const DriverMLAssignments = () => {
             onClick={() => setActiveDay("today")}
             className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
               activeDay === "today"
-                ? "bg-[var(--accent)] text-primary shadow-sm"
+                ? "bg-accent text-primary shadow-sm"
                 : "text-primary/50 hover:text-primary/70"
             }`}
           >
@@ -73,7 +73,7 @@ const DriverMLAssignments = () => {
             onClick={() => setActiveDay("tomorrow")}
             className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
               activeDay === "tomorrow"
-                ? "bg-[var(--accent)] text-primary shadow-sm"
+                ? "bg-accent text-primary shadow-sm"
                 : "text-primary/50 hover:text-primary/70"
             }`}
           >
@@ -99,7 +99,7 @@ const DriverMLAssignments = () => {
         {/* Loading */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-16">
-            <div className="w-10 h-10 border-4 border-primary/20 border-t-[var(--accent)] rounded-full animate-spin" />
+            <div className="w-10 h-10 border-4 border-primary/20 border-t-accent rounded-full animate-spin" />
             <p className="text-sm text-primary/50 mt-3">Loading schedule...</p>
           </div>
         )}
@@ -183,7 +183,7 @@ const DriverMLAssignments = () => {
 
                   {/* Waste + Truck Info */}
                   <div className="px-5 pb-4 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl bg-primary/[0.03] p-3">
+                    <div className="rounded-xl bg-primary/3 p-3">
                       <p className="text-[10px] text-primary/50 uppercase tracking-wider font-medium mb-1">
                         Expected Waste
                       </p>

@@ -41,7 +41,7 @@ const ThankYouPage = ({ driverInfo }) => {
 
             {driverInfo && (
               <div className="mt-6 p-6 bg-[#f5f1e8] rounded-xl w-full max-w-md">
-                <p className="text-sm text-[var(--accent)] mb-2 font-medium">Driver Information</p>
+                <p className="text-sm text-accent mb-2 font-medium">Driver Information</p>
                 <p className="text-base font-semibold text-primary">
                   Truck ID: {driverInfo.truckId}
                 </p>

@@ -130,7 +130,7 @@ const Districts = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-primary/8 bg-primary/[0.03]">
+                <tr className="border-b border-primary/8 bg-primary/3">
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Name</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Province</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Type</th>
@@ -146,7 +146,7 @@ const Districts = () => {
                 ) : districts.map(d => {
                   const badge = TYPE_BADGES[d.type] || { cls: "bg-gray-100 text-gray-700", icon: "?" };
                   return (
-                    <tr key={d._id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors">
+                    <tr key={d._id} className="border-b border-primary/5 hover:bg-primary/2 transition-colors">
                       <td className="px-5 py-3.5 font-semibold text-primary">{d.name}</td>
                       <td className="px-5 py-3.5 text-sm text-primary/60">{d.province || "--"}</td>
                       <td className="px-5 py-3.5">

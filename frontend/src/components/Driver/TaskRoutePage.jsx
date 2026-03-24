@@ -114,7 +114,7 @@ export default function TaskRoutePage() {
             <h1 className="text-2xl sm:text-4xl font-bold text-primary">
               Task Route
             </h1>
-            <div className="mt-2 h-[3px] w-40 bg-[var(--accent)] rounded-full" />
+            <div className="mt-2 h-0.75 w-40 bg-accent rounded-full" />
           </div>
 
           <button
@@ -134,7 +134,7 @@ export default function TaskRoutePage() {
 
         {/* Task details card */}
         <div className="bg-white rounded-3xl border border-primary/15 shadow-sm overflow-hidden mb-6">
-          <div className="px-6 py-5 border-b border-primary/15 bg-[var(--accent)] flex justify-between items-center">
+          <div className="px-6 py-5 border-b border-primary/15 bg-accent flex justify-between items-center">
             <div>
               <p className="text-xs font-semibold tracking-wide text-primary/70">
                 PICKUP DETAILS
@@ -178,11 +178,11 @@ export default function TaskRoutePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map */}
           <div className="lg:col-span-2 bg-white rounded-3xl border border-primary/15 shadow-sm overflow-hidden">
-            <div className="px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center gap-2">
+            <div className="px-5 py-3 bg-linear-to-r from-blue-600 to-blue-500 flex items-center gap-2">
               <MapPinIcon />
               <span className="text-white text-sm font-semibold">PICKUP LOCATION</span>
             </div>
-            <div className="h-[350px] sm:h-[400px]">
+            <div className="h-87.5 sm:h-100">
               {hasCoords ? (
                 <MapContainer
                   center={mapCenter}
@@ -222,7 +222,7 @@ export default function TaskRoutePage() {
                 TASK STATUS
               </p>
               <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--accent)] text-white">
+                <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-accent text-white">
                   {pickup.status}
                 </span>
               </div>
@@ -271,7 +271,7 @@ function DetailTile({ label, value, accent }) {
     <div>
       <p className="text-xs font-semibold text-primary/60">{label}</p>
       <p
-        className={`mt-1 text-sm font-semibold ${accent ? "text-[var(--accent)]" : "text-primary"
+        className={`mt-1 text-sm font-semibold ${accent ? "text-accent" : "text-primary"
           }`}
       >
         {value}
@@ -285,7 +285,7 @@ function StepIndicator({ step, label, active, done }) {
     <div className="flex items-center gap-3">
       <span
         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${done
-            ? "bg-[var(--accent)] text-white"
+            ? "bg-accent text-white"
             : active
               ? "bg-primary text-white"
               : "bg-primary/10 text-primary/40"

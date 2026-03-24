@@ -106,7 +106,7 @@ const Organizations = () => {
       {/* Org Grid */}
       {isLoading ? (
         <div className="flex items-center justify-center h-48 bg-white/50 rounded-2xl border border-primary/10">
-          <div className="w-8 h-8 border-4 border-primary/20 border-t-[var(--accent)] rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary/20 border-t-accent rounded-full animate-spin" />
         </div>
       ) : error ? (
         <div className="p-6 bg-red-50 rounded-2xl border border-red-200 text-red-600 text-center font-medium">{error}</div>
@@ -123,19 +123,19 @@ const Organizations = () => {
             <div
               key={org._id}
               onClick={() => navigate(`/admin-dashboard/organizations/${org._id}`)}
-              className="bg-white rounded-2xl border border-primary/10 shadow-sm overflow-hidden hover:shadow-lg hover:border-[var(--accent)]/30 transition-all cursor-pointer group"
+              className="bg-white rounded-2xl border border-primary/10 shadow-sm overflow-hidden hover:shadow-lg hover:border-accent/30 transition-all cursor-pointer group"
             >
               {/* Color Top Band */}
-              <div className={`h-2 bg-gradient-to-r ${ORG_COLORS[i % ORG_COLORS.length]}`} />
+              <div className={`h-2 bg-linear-to-r ${ORG_COLORS[i % ORG_COLORS.length]}`} />
 
               <div className="p-5">
                 {/* Org Name & Location */}
                 <div className="flex items-start gap-3 mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${ORG_COLORS[i % ORG_COLORS.length]} flex items-center justify-center text-xl font-bold text-primary shrink-0`}>
+                  <div className={`w-12 h-12 rounded-xl bg-linear-to-br ${ORG_COLORS[i % ORG_COLORS.length]} flex items-center justify-center text-xl font-bold text-primary shrink-0`}>
                     {org.name?.charAt(0)?.toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-lg font-bold text-primary truncate group-hover:text-[var(--accent)] transition-colors">
+                    <h3 className="text-lg font-bold text-primary truncate group-hover:text-accent transition-colors">
                       {org.name}
                     </h3>
                     <p className="text-xs text-primary/50 truncate">
@@ -146,15 +146,15 @@ const Organizations = () => {
 
                 {/* Resource Stats */}
                 <div className="grid grid-cols-3 gap-3 mb-4">
-                  <div className="p-3 rounded-xl bg-primary/[0.03] text-center">
+                  <div className="p-3 rounded-xl bg-primary/3 text-center">
                     <p className="text-xl font-bold text-primary">{org.admins?.length || 0}</p>
                     <p className="text-[11px] text-primary/50 font-medium uppercase tracking-wide">Admins</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-primary/[0.03] text-center">
+                  <div className="p-3 rounded-xl bg-primary/3 text-center">
                     <p className="text-xl font-bold text-primary">{org.fleet?.length || 0}</p>
                     <p className="text-[11px] text-primary/50 font-medium uppercase tracking-wide">Trucks</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-primary/[0.03] text-center">
+                  <div className="p-3 rounded-xl bg-primary/3 text-center">
                     <p className="text-xl font-bold text-purple-600">{org.driverCount || 0}</p>
                     <p className="text-[11px] text-primary/50 font-medium uppercase tracking-wide">Drivers</p>
                   </div>
@@ -215,11 +215,11 @@ const Organizations = () => {
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-primary/70 mb-1">Organization Name</label>
-                <input type="text" value={createForm.name} onChange={e => setCreateForm({...createForm, name: e.target.value})} placeholder="e.g. EcoWaste Logistics" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" />
+                <input type="text" value={createForm.name} onChange={e => setCreateForm({...createForm, name: e.target.value})} placeholder="e.g. EcoWaste Logistics" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-primary/70 mb-1">Address</label>
-                <input type="text" value={createForm.address} onChange={e => setCreateForm({...createForm, address: e.target.value})} placeholder="e.g. Kathmandu, Nepal" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" />
+                <input type="text" value={createForm.address} onChange={e => setCreateForm({...createForm, address: e.target.value})} placeholder="e.g. Kathmandu, Nepal" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               {formError && <p className="text-red-500 text-sm font-medium">{formError}</p>}
               <button type="submit" disabled={submitting} className="w-full py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition disabled:opacity-50">
@@ -239,11 +239,11 @@ const Organizations = () => {
             <form onSubmit={handleEdit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-primary/70 mb-1">Organization Name</label>
-                <input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" />
+                <input type="text" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-primary/70 mb-1">Address</label>
-                <input type="text" value={editForm.address} onChange={e => setEditForm({...editForm, address: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" />
+                <input type="text" value={editForm.address} onChange={e => setEditForm({...editForm, address: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               {formError && <p className="text-red-500 text-sm font-medium">{formError}</p>}
               <button type="submit" disabled={submitting} className="w-full py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition disabled:opacity-50">
@@ -264,19 +264,19 @@ const Organizations = () => {
             <form onSubmit={handleAddAdmin} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-primary/70 mb-1">Full Name</label>
-                <input type="text" value={adminForm.name} onChange={e => setAdminForm({...adminForm, name: e.target.value})} placeholder="e.g. Sita Gurung" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" />
+                <input type="text" value={adminForm.name} onChange={e => setAdminForm({...adminForm, name: e.target.value})} placeholder="e.g. Sita Gurung" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-primary/70 mb-1">Email</label>
-                <input type="email" value={adminForm.email} onChange={e => setAdminForm({...adminForm, email: e.target.value})} placeholder="admin@example.com" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" />
+                <input type="email" value={adminForm.email} onChange={e => setAdminForm({...adminForm, email: e.target.value})} placeholder="admin@example.com" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-primary/70 mb-1">Phone</label>
-                <input type="text" value={adminForm.phone} onChange={e => setAdminForm({...adminForm, phone: e.target.value})} placeholder="98XXXXXXXX" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" />
+                <input type="text" value={adminForm.phone} onChange={e => setAdminForm({...adminForm, phone: e.target.value})} placeholder="98XXXXXXXX" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-primary/70 mb-1">Password</label>
-                <input type="password" value={adminForm.password} onChange={e => setAdminForm({...adminForm, password: e.target.value})} placeholder="Min 6 characters" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]" />
+                <input type="password" value={adminForm.password} onChange={e => setAdminForm({...adminForm, password: e.target.value})} placeholder="Min 6 characters" className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               {formError && <p className="text-red-500 text-sm font-medium">{formError}</p>}
               <button type="submit" disabled={submitting} className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition disabled:opacity-50">

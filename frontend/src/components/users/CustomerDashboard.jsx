@@ -106,14 +106,14 @@ function CustomerDashboard() {
   return (
     <div ref={pageRef} className="min-h-screen bg-[radial-gradient(circle_at_top_left,#fcf8f1_0%,#f3ebdf_45%,#ecdfcb_100%)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
-        <div className="lp-reveal lp-delay-0 bg-white/65 backdrop-blur-sm border border-[#354f52]/15 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-[0_18px_50px_rgba(53,79,82,0.12)]">
+        <div className="lp-reveal lp-delay-0 bg-white/65 backdrop-blur-sm border border-primary/15 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-[0_18px_50px_rgba(53,79,82,0.12)]">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
             <div className="max-w-3xl">
               <p className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold tracking-wide uppercase bg-[#296200]/10 text-[#296200] mb-4">
                 Customer Dashboard
               </p>
 
-              <h1 className="font-['Outfit',sans-serif] font-semibold text-3xl sm:text-4xl lg:text-5xl text-[#354f52] leading-tight">
+              <h1 className="font-['Outfit',sans-serif] font-semibold text-3xl sm:text-4xl lg:text-5xl text-primary leading-tight">
                 Manage your waste collection
                 <span className="block text-[#2f473f]">with clarity and speed</span>
               </h1>
@@ -125,7 +125,7 @@ function CustomerDashboard() {
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <button
                   onClick={handleMyWastePickUp}
-                  className="bg-[#354f52] text-[#f5f1e8] px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-['Inter',sans-serif] font-medium text-sm sm:text-base hover:bg-[#2a3f41] transition-all focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2 shadow-lg"
+                  className="bg-primary text-[#f5f1e8] px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-['Inter',sans-serif] font-medium text-sm sm:text-base hover:bg-[#2a3f41] transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-lg"
                 >
                   My Waste Pick Up
                 </button>
@@ -139,7 +139,7 @@ function CustomerDashboard() {
 
             <button
               onClick={handleSchedule}
-              className="self-start md:self-center bg-[#354f52] w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center hover:bg-[#2a3f41] transition-all shadow-lg focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2 cursor-pointer"
+              className="self-start md:self-center bg-primary w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center hover:bg-[#2a3f41] transition-all shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer"
               aria-label="View schedule"
             >
               <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="#f5f1e8" strokeWidth="2">
@@ -155,7 +155,7 @@ function CustomerDashboard() {
         <section className="lp-reveal lp-delay-1 mt-12 sm:mt-14">
           <div className="flex flex-wrap items-end justify-between gap-4 mb-7">
             <div>
-              <h2 className="font-['Outfit',sans-serif] font-bold text-2xl sm:text-3xl text-[#354f52]">More services</h2>
+              <h2 className="font-['Outfit',sans-serif] font-bold text-2xl sm:text-3xl text-primary">More services</h2>
               <p className="font-['Poppins',sans-serif] text-sm sm:text-base text-[#5f6e70] mt-1">
                 Available tools in your customer account
               </p>
@@ -169,13 +169,13 @@ function CustomerDashboard() {
             {serviceCards.map((service) => (
               <article
                 key={service.id}
-                className="bg-white/90 border border-[#354f52]/20 rounded-2xl p-5 sm:p-6 shadow-[0_8px_24px_rgba(53,79,82,0.10)]"
+                className="bg-white/90 border border-primary/20 rounded-2xl p-5 sm:p-6 shadow-[0_8px_24px_rgba(53,79,82,0.10)]"
               >
                 <div className="w-14 h-14 rounded-xl bg-[#f4f8f1] border border-[#296200]/25 flex items-center justify-center mb-4">
                   {service.icon}
                 </div>
 
-                <h3 className="font-['Outfit',sans-serif] font-semibold text-lg text-[#354f52] leading-snug">
+                <h3 className="font-['Outfit',sans-serif] font-semibold text-lg text-primary leading-snug">
                   {service.title}
                 </h3>
 
@@ -183,7 +183,7 @@ function CustomerDashboard() {
                   {service.description}
                 </p>
 
-                <div className="mt-4 pt-3 border-t border-[#354f52]/10">
+                <div className="mt-4 pt-3 border-t border-primary/10">
                   <p className="font-['Poppins',sans-serif] text-xs text-[#296200]">Route: {service.route}</p>
                 </div>
               </article>

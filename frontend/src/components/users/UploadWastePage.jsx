@@ -187,15 +187,15 @@ function UploadWastePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#fcf8f1_0%,_#f3ebdf_45%,_#ecdfcb_100%)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#fcf8f1_0%,#f3ebdf_45%,#ecdfcb_100%)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
-        <section className="bg-white/70 backdrop-blur-sm border border-[#354f52]/15 rounded-3xl p-6 sm:p-8 shadow-[0_18px_50px_rgba(53,79,82,0.12)] mb-8">
+        <section className="bg-white/70 backdrop-blur-sm border border-primary/15 rounded-3xl p-6 sm:p-8 shadow-[0_18px_50px_rgba(53,79,82,0.12)] mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <p className="inline-flex items-center rounded-full bg-[#296200]/10 px-3 py-1 text-xs font-semibold tracking-wide text-[#296200] uppercase">
                 Waste Submission
               </p>
-              <h1 className="mt-3 font-['Outfit',sans-serif] text-3xl sm:text-4xl font-semibold text-[#354f52] leading-tight">
+              <h1 className="mt-3 font-['Outfit',sans-serif] text-3xl sm:text-4xl font-semibold text-primary leading-tight">
                 Upload and classify waste images
               </h1>
               <p className="mt-2 font-['Poppins',sans-serif] text-sm sm:text-base text-[#5d6c6e] max-w-2xl">
@@ -205,7 +205,7 @@ function UploadWastePage() {
             <button
               type="button"
               onClick={() => navigate('/customer-dashboard')}
-              className="self-start md:self-auto rounded-xl border border-[#354f52]/30 px-4 py-2 text-sm font-medium text-[#354f52] hover:bg-white transition"
+              className="self-start md:self-auto rounded-xl border border-primary/30 px-4 py-2 text-sm font-medium text-primary hover:bg-white transition"
             >
               Back to Dashboard
             </button>
@@ -214,8 +214,8 @@ function UploadWastePage() {
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 items-start">
           <div className="xl:col-span-2 space-y-6">
-            <section className="rounded-2xl border border-[#354f52]/15 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-['Outfit',sans-serif] text-xl sm:text-2xl font-semibold text-[#354f52] mb-4">
+            <section className="rounded-2xl border border-primary/15 bg-white p-5 sm:p-6 shadow-sm">
+              <h2 className="font-['Outfit',sans-serif] text-xl sm:text-2xl font-semibold text-primary mb-4">
                 1. Waste category
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
@@ -228,7 +228,7 @@ function UploadWastePage() {
                       onClick={() => setCategory(item.id)}
                       className={`rounded-xl border p-4 text-left transition-all ${selected
                           ? 'border-[#296200] bg-[#296200] text-white shadow-md'
-                          : 'border-[#354f52]/20 bg-[#fdfcf9] text-[#354f52] hover:border-[#296200]/60 hover:bg-[#f6fbf2]'
+                          : 'border-primary/20 bg-[#fdfcf9] text-primary hover:border-[#296200]/60 hover:bg-[#f6fbf2]'
                         }`}
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -246,8 +246,8 @@ function UploadWastePage() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-[#354f52]/15 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-['Outfit',sans-serif] text-xl sm:text-2xl font-semibold text-[#354f52] mb-4">
+            <section className="rounded-2xl border border-primary/15 bg-white p-5 sm:p-6 shadow-sm">
+              <h2 className="font-['Outfit',sans-serif] text-xl sm:text-2xl font-semibold text-primary mb-4">
                 2. Difficulty level
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
@@ -259,8 +259,8 @@ function UploadWastePage() {
                       type="button"
                       onClick={() => setLevel(item.id)}
                       className={`rounded-xl border p-4 text-left transition-all ${selected
-                          ? 'border-[#354f52] bg-[#354f52] text-white shadow-md'
-                          : 'border-[#354f52]/20 bg-[#fdfcf9] text-[#354f52] hover:border-[#354f52]/60 hover:bg-[#f8f8f7]'
+                          ? 'border-primary bg-primary text-white shadow-md'
+                          : 'border-primary/20 bg-[#fdfcf9] text-primary hover:border-primary/60 hover:bg-[#f8f8f7]'
                         }`}
                     >
                       <div className="flex items-center justify-between mb-2">
@@ -278,29 +278,29 @@ function UploadWastePage() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-[#354f52]/15 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-['Outfit',sans-serif] text-xl sm:text-2xl font-semibold text-[#354f52] mb-4">
+            <section className="rounded-2xl border border-primary/15 bg-white p-5 sm:p-6 shadow-sm">
+              <h2 className="font-['Outfit',sans-serif] text-xl sm:text-2xl font-semibold text-primary mb-4">
                 3. Your location
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#354f52]/80 mb-1.5">Province *</label>
+                  <label className="block text-sm font-medium text-primary/80 mb-1.5">Province *</label>
                   <select
                     value={province}
                     onChange={(e) => { setProvince(e.target.value); setDistrict(''); }}
-                    className="w-full px-4 py-3 rounded-xl border border-[#354f52]/20 bg-white text-[#354f52] font-medium focus:outline-none focus:ring-2 focus:ring-[#296200] transition"
+                    className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-white text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#296200] transition"
                   >
                     <option value="">Select Province...</option>
                     {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#354f52]/80 mb-1.5">District *</label>
+                  <label className="block text-sm font-medium text-primary/80 mb-1.5">District *</label>
                   <select
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
                     disabled={!province}
-                    className="w-full px-4 py-3 rounded-xl border border-[#354f52]/20 bg-white text-[#354f52] font-medium focus:outline-none focus:ring-2 focus:ring-[#296200] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-3 rounded-xl border border-primary/20 bg-white text-primary font-medium focus:outline-none focus:ring-2 focus:ring-[#296200] transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <option value="">Select District...</option>
                     {province && PROVINCE_DISTRICTS[province]?.map(d => <option key={d} value={d}>{d}</option>)}
@@ -309,8 +309,8 @@ function UploadWastePage() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-[#354f52]/15 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-['Outfit',sans-serif] text-xl sm:text-2xl font-semibold text-[#354f52] mb-4">
+            <section className="rounded-2xl border border-primary/15 bg-white p-5 sm:p-6 shadow-sm">
+              <h2 className="font-['Outfit',sans-serif] text-xl sm:text-2xl font-semibold text-primary mb-4">
                 4. Upload image
               </h2>
 
@@ -318,13 +318,13 @@ function UploadWastePage() {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`relative block w-full min-h-[280px] sm:min-h-[340px] rounded-2xl border-2 border-dashed cursor-pointer transition-all ${isDragging
+                className={`relative block w-full min-h-70 sm:min-h-85 rounded-2xl border-2 border-dashed cursor-pointer transition-all ${isDragging
                     ? 'border-[#296200] bg-[#f1f9e8]'
-                    : 'border-[#354f52]/35 bg-[#fcfbf8] hover:border-[#296200]/70 hover:bg-[#f7fbf1]'
+                    : 'border-primary/35 bg-[#fcfbf8] hover:border-[#296200]/70 hover:bg-[#f7fbf1]'
                   }`}
               >
                 {!preview ? (
-                  <div className="h-full min-h-[280px] sm:min-h-[340px] flex flex-col items-center justify-center text-center px-6">
+                  <div className="h-full min-h-70 sm:min-h-85 flex flex-col items-center justify-center text-center px-6">
                     <svg
                       className="w-14 h-14 text-[#296200] mb-4"
                       fill="none"
@@ -335,7 +335,7 @@ function UploadWastePage() {
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
-                    <p className="font-semibold text-[#354f52] text-lg">Drop your file here or click to browse</p>
+                    <p className="font-semibold text-primary text-lg">Drop your file here or click to browse</p>
                     <p className="mt-2 text-sm text-[#5d6c6e]">JPEG, PNG, WebP up to 5MB</p>
                     <input
                       type="file"
@@ -345,7 +345,7 @@ function UploadWastePage() {
                     />
                   </div>
                 ) : (
-                  <div className="relative p-3 sm:p-4 h-full min-h-[280px] sm:min-h-[340px]">
+                  <div className="relative p-3 sm:p-4 h-full min-h-70 sm:min-h-85">
                     <img
                       src={preview}
                       alt="Preview"
@@ -370,8 +370,8 @@ function UploadWastePage() {
               {uploadError && <p className="mt-4 text-sm text-red-600">{uploadError}</p>}
             </section>
 
-            <section className="rounded-2xl border border-[#354f52]/15 bg-[linear-gradient(120deg,#f3f9ed,#f9f5ec)] p-5 sm:p-6 shadow-sm">
-              <h3 className="font-['Outfit',sans-serif] text-lg sm:text-xl font-semibold text-[#354f52] mb-4">
+            <section className="rounded-2xl border border-primary/15 bg-[linear-gradient(120deg,#f3f9ed,#f9f5ec)] p-5 sm:p-6 shadow-sm">
+              <h3 className="font-['Outfit',sans-serif] text-lg sm:text-xl font-semibold text-primary mb-4">
                 Tips for better image quality
               </h3>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-[#4f5f62]">
@@ -383,38 +383,38 @@ function UploadWastePage() {
             </section>
           </div>
 
-          <aside className="xl:sticky xl:top-6 rounded-2xl border border-[#354f52]/15 bg-white p-5 sm:p-6 shadow-sm">
-            <h3 className="font-['Outfit',sans-serif] text-xl font-semibold text-[#354f52] mb-4">
+          <aside className="xl:sticky xl:top-6 rounded-2xl border border-primary/15 bg-white p-5 sm:p-6 shadow-sm">
+            <h3 className="font-['Outfit',sans-serif] text-xl font-semibold text-primary mb-4">
               Submission summary
             </h3>
 
             <div className="space-y-4">
-              <div className="rounded-xl bg-[#f7f5ef] p-4 border border-[#354f52]/10">
+              <div className="rounded-xl bg-[#f7f5ef] p-4 border border-primary/10">
                 <p className="text-xs uppercase tracking-wide text-[#5d6c6e] mb-1">Category</p>
-                <p className="font-semibold text-[#354f52]">{selectedCategory?.label}</p>
+                <p className="font-semibold text-primary">{selectedCategory?.label}</p>
               </div>
 
-              <div className="rounded-xl bg-[#f7f5ef] p-4 border border-[#354f52]/10">
+              <div className="rounded-xl bg-[#f7f5ef] p-4 border border-primary/10">
                 <p className="text-xs uppercase tracking-wide text-[#5d6c6e] mb-1">Difficulty</p>
-                <p className="font-semibold text-[#354f52]">{selectedLevel?.label}</p>
+                <p className="font-semibold text-primary">{selectedLevel?.label}</p>
               </div>
 
-              <div className="rounded-xl bg-[#f7f5ef] p-4 border border-[#354f52]/10">
+              <div className="rounded-xl bg-[#f7f5ef] p-4 border border-primary/10">
                 <p className="text-xs uppercase tracking-wide text-[#5d6c6e] mb-1">Location</p>
-                <p className="font-semibold text-[#354f52]">{district || 'Not selected'}{province ? `, ${province}` : ''}</p>
+                <p className="font-semibold text-primary">{district || 'Not selected'}{province ? `, ${province}` : ''}</p>
               </div>
 
-              <div className="rounded-xl bg-[#f7f5ef] p-4 border border-[#354f52]/10">
+              <div className="rounded-xl bg-[#f7f5ef] p-4 border border-primary/10">
                 <p className="text-xs uppercase tracking-wide text-[#5d6c6e] mb-1">Image file</p>
-                <p className="font-semibold text-[#354f52] truncate" title={file?.name || 'No file selected'}>
+                <p className="font-semibold text-primary truncate" title={file?.name || 'No file selected'}>
                   {file ? file.name : lastUpload?.url ? 'Uploaded image available' : 'No file selected'}
                 </p>
                 {file && <p className="mt-1 text-xs text-[#5d6c6e]">{formatFileSize(file.size)}</p>}
               </div>
 
               {isSubmitting && uploadProgress > 0 && (
-                <div className="rounded-xl border border-[#354f52]/10 p-4">
-                  <div className="h-2 rounded-full bg-[#354f52]/15 overflow-hidden">
+                <div className="rounded-xl border border-primary/10 p-4">
+                  <div className="h-2 rounded-full bg-primary/15 overflow-hidden">
                     <div
                       className="h-full bg-[#296200] transition-all duration-300"
                       style={{ width: `${uploadProgress}%` }}

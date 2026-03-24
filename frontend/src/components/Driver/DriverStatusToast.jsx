@@ -97,7 +97,7 @@ export default function DriverStatusToast() {
         className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-primary overflow-hidden cursor-pointer hover:scale-[1.02] active:scale-95 transition-transform"
         style={{ animation: "slideUpToast 0.4s ease-out" }}
       >
-        <div className="px-4 py-3 bg-[var(--accent)]/10 flex items-center justify-between">
+        <div className="px-4 py-3 bg-accent/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />

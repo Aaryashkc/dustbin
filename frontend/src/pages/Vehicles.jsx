@@ -123,7 +123,7 @@ const Vehicles = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-primary/8 bg-primary/[0.03]">
+                <tr className="border-b border-primary/8 bg-primary/3">
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">License Plate</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Capacity</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Status</th>
@@ -138,7 +138,7 @@ const Vehicles = () => {
                 ) : vehicles.map(v => {
                   const duty = getDutyType(v.capacity);
                   return (
-                    <tr key={v.id} className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors">
+                    <tr key={v.id} className="border-b border-primary/5 hover:bg-primary/2 transition-colors">
                       <td className="px-5 py-3.5 font-semibold text-primary">{v.licensePlate}</td>
                       <td className="px-5 py-3.5">
                         <div className="flex flex-col gap-0.5">

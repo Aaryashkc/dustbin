@@ -93,7 +93,7 @@ const DeletionRequests = ({ onUpdate }) => {
 
       {/* Request Cards */}
       {isLoading ? (
-        <div className="flex items-center justify-center h-48 bg-white/50 rounded-2xl border border-primary/10"><div className="w-8 h-8 border-4 border-primary/20 border-t-[var(--accent)] rounded-full animate-spin" /></div>
+        <div className="flex items-center justify-center h-48 bg-white/50 rounded-2xl border border-primary/10"><div className="w-8 h-8 border-4 border-primary/20 border-t-accent rounded-full animate-spin" /></div>
       ) : error ? (
         <div className="p-6 bg-red-50 rounded-2xl border border-red-200 text-red-600 text-center font-medium">{error}</div>
       ) : requests.length === 0 ? (
@@ -127,7 +127,7 @@ const DeletionRequests = ({ onUpdate }) => {
                   </div>
                 </div>
                 {isSuperAdmin && r.status === "pending" && (
-                  <button onClick={() => { setReviewTarget(r); setReviewNote(""); }} className="px-4 py-2 text-sm font-semibold text-primary bg-[var(--accent)] rounded-xl hover:brightness-110 transition whitespace-nowrap">
+                  <button onClick={() => { setReviewTarget(r); setReviewNote(""); }} className="px-4 py-2 text-sm font-semibold text-primary bg-accent rounded-xl hover:brightness-110 transition whitespace-nowrap">
                     Review
                   </button>
                 )}
@@ -145,7 +145,7 @@ const DeletionRequests = ({ onUpdate }) => {
             <h2 className="text-xl font-bold text-primary mb-4">Review Deletion Request</h2>
 
             <div className="space-y-3 mb-6">
-              <div className="p-4 rounded-xl bg-primary/[0.03] border border-primary/10 space-y-2">
+              <div className="p-4 rounded-xl bg-primary/3 border border-primary/10 space-y-2">
                 <div className="flex items-center gap-2"><span className="text-lg">{reviewTarget.type === "vehicle" ? "🚛" : "👤"}</span><strong className="text-primary">{reviewTarget.targetName}</strong><span className="text-xs text-primary/50 uppercase">({reviewTarget.type})</span></div>
                 <p className="text-sm text-primary/70"><strong>Reason:</strong> {reviewTarget.reason}</p>
                 <p className="text-sm text-primary/50">From: {reviewTarget.requestedBy?.name} · {reviewTarget.orgId?.name} · {new Date(reviewTarget.createdAt).toLocaleDateString()}</p>
@@ -154,7 +154,7 @@ const DeletionRequests = ({ onUpdate }) => {
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-primary/70 mb-1">Review Note (optional)</label>
-              <textarea value={reviewNote} onChange={e => setReviewNote(e.target.value)} rows={2} placeholder="Add a note..." className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] resize-none" />
+              <textarea value={reviewNote} onChange={e => setReviewNote(e.target.value)} rows={2} placeholder="Add a note..." className="w-full px-4 py-2.5 rounded-xl border border-primary/15 focus:outline-none focus:ring-2 focus:ring-accent resize-none" />
             </div>
 
             <div className="flex gap-3">

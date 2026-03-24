@@ -125,7 +125,7 @@ function ZoneModal({ isOpen, onClose, onSubmit, trucks, organizations, isSuperAd
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
         {/* Colored header */}
-        <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-5">
+        <div className="bg-linear-to-r from-primary to-primary/80 px-6 py-5">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-black">
@@ -292,7 +292,7 @@ function ZoneModal({ isOpen, onClose, onSubmit, trucks, organizations, isSuperAd
                 Cancel
               </button>
               <button type="submit" disabled={isSubmitting}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-[#354f52] text-white text-sm font-semibold hover:bg-[#354f52]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+                className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
                 {isSubmitting
                   ? <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> Saving...</>
                   : editZone ? '✓ Save Changes' : '+ Create Zone'}
@@ -557,20 +557,20 @@ const Zones = () => {
             </div>
             {isSuperAdmin && (
               <select value={selectedOrg} onChange={e => setSelectedOrg(e.target.value)}
-                className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/25 min-w-[155px]">
+                className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/25 min-w-38.75">
                 <option value="all">All Organizations</option>
                 {organizations.map(o => <option key={o._id || o.id} value={o._id || o.id}>{o.name}</option>)}
               </select>
             )}
             <select value={selectedDuty} onChange={e => setSelectedDuty(e.target.value)}
-              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/25 min-w-[140px]">
+              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/25 min-w-35">
               <option value="all">All Classes</option>
               <option value="light duty">🔵 Light Duty</option>
               <option value="medium duty">🟡 Medium Duty</option>
               <option value="heavy duty">🔴 Heavy Duty</option>
             </select>
             <select value={selectedDay} onChange={e => setSelectedDay(e.target.value)}
-              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/25 min-w-[130px]">
+              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/25 min-w-32.5">
               <option value="all">All Days</option>
               {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
             </select>

@@ -86,7 +86,7 @@ export default function PickupStatusToast() {
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-[9999] max-w-sm w-full transition-all duration-400 ${
+      className={`fixed bottom-6 right-6 z-9999 max-w-sm w-full transition-all duration-400 ${
         exiting ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
       }`}
       style={{ animation: exiting ? "none" : "slideUpToast 0.4s ease-out" }}
@@ -94,7 +94,7 @@ export default function PickupStatusToast() {
       <div className={`${info.color} text-white rounded-2xl shadow-2xl overflow-hidden`}>
         {/* Main content */}
         <div className="px-5 py-4 flex items-center gap-3">
-          <span className="text-2xl flex-shrink-0">{info.emoji}</span>
+          <span className="text-2xl shrink-0">{info.emoji}</span>
           <div className="min-w-0 flex-1">
             <p className="font-semibold text-sm leading-tight">{info.text}</p>
             {driverName && (
@@ -103,7 +103,7 @@ export default function PickupStatusToast() {
           </div>
           <button
             onClick={dismiss}
-            className="flex-shrink-0 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition"
+            className="shrink-0 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition"
             aria-label="Dismiss"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

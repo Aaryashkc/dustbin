@@ -182,7 +182,7 @@ export default function AcceptTaskPage() {
             <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-primary">
               New Pickup Request
             </h1>
-            <div className="mt-2 h-[3px] w-56 bg-[var(--accent)] rounded-full" />
+            <div className="mt-2 h-0.75 w-56 bg-accent rounded-full" />
           </div>
           <button
             className="w-11 h-11 rounded-full border border-primary/30 bg-white flex items-center justify-center hover:shadow-sm active:scale-95 transition"
@@ -229,7 +229,7 @@ export default function AcceptTaskPage() {
           takenByOther ? "border-red-200 opacity-60" : "border-primary/15"
         }`}>
           {/* Header row */}
-          <div className="px-5 sm:px-7 py-5 sm:py-6 bg-[var(--accent)] border-b border-primary/15 flex items-center justify-between">
+          <div className="px-5 sm:px-7 py-5 sm:py-6 bg-accent border-b border-primary/15 flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold tracking-wide text-primary/70">
                 PICKUP REQUEST DETAILS
@@ -251,7 +251,7 @@ export default function AcceptTaskPage() {
             <Row
               leftLabel="WASTE CATEGORY"
               leftValue={category.toUpperCase()}
-              leftValueClass="text-[var(--accent)] font-semibold"
+              leftValueClass="text-accent font-semibold"
               rightLabel="DIFFICULTY LEVEL"
               rightValue={level.toUpperCase()}
             />
@@ -282,7 +282,7 @@ export default function AcceptTaskPage() {
           <button
             onClick={handleAccept}
             disabled={isAccepting || isDeclining || takenByOther}
-            className={`w-full sm:w-auto sm:min-w-[220px] px-8 py-4 rounded-2xl font-semibold transition shadow-sm
+            className={`w-full sm:w-auto sm:min-w-55 px-8 py-4 rounded-2xl font-semibold transition shadow-sm
               ${isAccepting || isDeclining || takenByOther
                 ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                 : "bg-[#213a3d] text-white hover:opacity-95 active:scale-[0.99]"
@@ -303,7 +303,7 @@ export default function AcceptTaskPage() {
           <button
             onClick={handleDecline}
             disabled={isAccepting || isDeclining}
-            className={`w-full sm:w-auto sm:min-w-[180px] px-8 py-4 rounded-2xl font-semibold transition shadow-sm
+            className={`w-full sm:w-auto sm:min-w-45 px-8 py-4 rounded-2xl font-semibold transition shadow-sm
               ${isAccepting || isDeclining
                 ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                 : "bg-red-400 text-white hover:bg-red-500 active:scale-[0.99]"

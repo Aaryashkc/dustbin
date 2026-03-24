@@ -45,7 +45,7 @@ const OrgDetail = () => {
   if (isLoading || !currentOrg) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-10 h-10 border-4 border-primary/20 border-t-[var(--accent)] rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-primary/20 border-t-accent rounded-full animate-spin" />
       </div>
     );
   }
@@ -109,7 +109,7 @@ const OrgDetail = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-primary/[0.03] p-1 rounded-xl overflow-x-auto">
+      <div className="flex gap-1 bg-primary/3 p-1 rounded-xl overflow-x-auto">
         {TABS.map(tab => (
           <button
             key={tab.id}
@@ -169,7 +169,7 @@ const OrgDetail = () => {
               ) : (
                 <div className="space-y-2">
                   {admins.map(a => (
-                    <div key={a._id} className="flex items-center gap-3 p-2 rounded-lg bg-primary/[0.02]">
+                    <div key={a._id} className="flex items-center gap-3 p-2 rounded-lg bg-primary/2">
                       <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">
                         {a.name?.charAt(0)?.toUpperCase()}
                       </div>
@@ -200,7 +200,7 @@ const OrgDetail = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-primary/[0.03] border-b border-primary/10">
+                    <tr className="bg-primary/3 border-b border-primary/10">
                       <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">License Plate</th>
                       <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">Capacity</th>
                       <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">Type</th>
@@ -210,7 +210,7 @@ const OrgDetail = () => {
                   </thead>
                   <tbody className="divide-y divide-primary/5">
                     {trucks.map(truck => (
-                      <tr key={truck.id} className="hover:bg-primary/[0.02] transition">
+                      <tr key={truck.id} className="hover:bg-primary/2 transition">
                         <td className="px-5 py-4">
                           <span className="font-bold text-primary">{truck.licensePlate}</span>
                         </td>
@@ -296,7 +296,7 @@ const OrgDetail = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-primary/[0.03] border-b border-primary/10">
+                    <tr className="bg-primary/3 border-b border-primary/10">
                       <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">District Name</th>
                       <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">Province</th>
                       <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">Type</th>
@@ -305,7 +305,7 @@ const OrgDetail = () => {
                   </thead>
                   <tbody className="divide-y divide-primary/5">
                     {districts.map(d => (
-                      <tr key={d._id} className="hover:bg-primary/[0.02] transition">
+                      <tr key={d._id} className="hover:bg-primary/2 transition">
                         <td className="px-5 py-4 font-bold text-primary">{d.name}</td>
                         <td className="px-5 py-4 text-sm text-primary/70">{d.province || "N/A"}</td>
                         <td className="px-5 py-4">

@@ -159,7 +159,7 @@ function OTPVerificationPage() {
           {/* Left Side - OTP Form */}
           <div className="w-full max-w-xl mx-auto lg:mx-0">
             {/* Welcome Heading */}
-            <h1 className="font-['Outfit',sans-serif] font-bold text-4xl sm:text-5xl lg:text-6xl text-[#354f52] mb-4">
+            <h1 className="font-['Outfit',sans-serif] font-bold text-4xl sm:text-5xl lg:text-6xl text-primary mb-4">
               <span className="block leading-tight mb-2">
                 Hello <span className="text-[#296200]">User</span>
               </span>
@@ -168,7 +168,7 @@ function OTPVerificationPage() {
               </span>
             </h1>
 
-            <p className="font-['Poppins',sans-serif] text-base sm:text-lg text-[#354f52] mb-8 sm:mb-10">
+            <p className="font-['Poppins',sans-serif] text-base sm:text-lg text-primary mb-8 sm:mb-10">
               Enter your Code
             </p>
 
@@ -188,8 +188,8 @@ function OTPVerificationPage() {
                     onPaste={index === 0 ? handlePaste : undefined}
                     disabled={isLoading}
                     className={`w-12 h-12 sm:w-14 sm:h-14 text-center text-xl sm:text-2xl font-['Poppins',sans-serif] font-semibold border-2 ${
-                      error ? 'border-red-500' : 'border-[#354f52]'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all bg-white text-[#354f52]`}
+                      error ? 'border-red-500' : 'border-primary'
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all bg-white text-primary`}
                     aria-label={`Digit ${index + 1}`}
                   />
                 ))}
@@ -206,7 +206,7 @@ function OTPVerificationPage() {
             <button
               onClick={handleVerify}
               disabled={isLoading || otp.join('').length !== 6}
-              className="bg-[#354f52] flex gap-3 h-12 sm:h-14 items-center justify-center px-8 sm:px-10 rounded-2xl hover:bg-[#2a3f41] transition-all active:scale-95 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2 shadow-md"
+              className="bg-primary flex gap-3 h-12 sm:h-14 items-center justify-center px-8 sm:px-10 rounded-2xl hover:bg-[#2a3f41] transition-all active:scale-95 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-md"
               aria-label="Verify OTP and log in"
             >
               <span className="font-['Inter',sans-serif] font-medium text-[#f5f1e8] text-lg sm:text-xl">
@@ -248,7 +248,7 @@ function OTPVerificationPage() {
           {/* Right Side - Hero Image */}
           <div className="hidden lg:block">
             <div 
-              className="relative w-full aspect-[4/5] max-w-md xl:max-w-lg mx-auto"
+              className="relative w-full aspect-4/5 max-w-md xl:max-w-lg mx-auto"
               role="img"
               aria-label="Waste management worker in orange uniform"
             >
@@ -260,7 +260,7 @@ function OTPVerificationPage() {
               />
               <div 
                 aria-hidden="true" 
-                className="absolute inset-0 border-[#84a98c] border-8 sm:border-[12px] lg:border-[16px] rounded-2xl pointer-events-none" 
+                className="absolute inset-0 border-[#84a98c] border-8 sm:border-12 lg:border-16 rounded-2xl pointer-events-none" 
               />
             </div>
           </div>

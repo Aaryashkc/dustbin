@@ -20,11 +20,11 @@ export function Hero() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
         <div className="space-y-8 z-10">
           <h2 className="font-['Outfit'] font-bold leading-[1.2]">
-            <span className="text-[#354f52] text-4xl md:text-5xl lg:text-6xl block mb-2">
+            <span className="text-primarytext-4xl md:text-5xl lg:text-6xl block mb-2">
               Manage waste collection
             </span>
             <span
-              className="text-3xl md:text-4xl lg:text-5xl bg-gradient-to-r from-[#57a521] via-[#3f7d18] to-[#213f0d] bg-clip-text"
+              className="text-3xl md:text-4xl lg:text-5xl bg-linear-to-r from-[#57a521] via-[#3f7d18] to-[#213f0d] bg-clip-text"
               style={{ WebkitTextFillColor: 'transparent' }}
             >
               with precision and ease
@@ -36,13 +36,13 @@ export function Hero() {
           </p>
           <div className="flex flex-wrap gap-4">
             <Link to={getStartedLink}>
-              <button className="bg-[#354f52] text-[#f5f1e8] px-10 py-5 rounded-[20px] font-['Inter'] font-medium text-xl flex items-center gap-3 hover:bg-opacity-90 transition-all cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-1">
+              <button className="bg-primarytext-[#f5f1e8] px-10 py-5 rounded-[20px] font-['Inter'] font-medium text-xl flex items-center gap-3 hover:bg-opacity-90 transition-all cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-1">
                 {getStartedLabel}
                 <ArrowRight className="w-5 h-5" />
               </button>
             </Link>
             <Link to={learnMoreLink}>
-              <button className="border-2 border-[#354f52] text-[#354f52] px-10 py-5 rounded-[20px] font-['Inter'] font-medium text-xl hover:bg-[#354f52] hover:text-white transition-all cursor-pointer">
+              <button className="border-2 border-primarytext-primarypx-10 py-5 rounded-[20px] font-['Inter'] font-medium text-xl hover:bg-primaryhover:text-white transition-all cursor-pointer">
                 Learn More
               </button>
             </Link>

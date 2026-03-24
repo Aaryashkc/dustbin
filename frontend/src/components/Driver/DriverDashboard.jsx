@@ -202,7 +202,7 @@ export default function DriverDashboard() {
                   </div>
                   <button
                     onClick={() => handleViewRequest(pickup.id || pickup._id)}
-                    className="ml-4 flex-shrink-0 bg-primary text-white text-xs font-semibold px-5 py-2.5 rounded-xl hover:opacity-90 active:scale-95 transition"
+                    className="ml-4 shrink-0 bg-primary text-white text-xs font-semibold px-5 py-2.5 rounded-xl hover:opacity-90 active:scale-95 transition"
                   >
                     View
                   </button>
@@ -251,7 +251,7 @@ export default function DriverDashboard() {
                   </div>
                   <Link
                     to="/driver-ml-assignments"
-                    className="ml-4 flex-shrink-0 bg-blue-600 text-white text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-700 active:scale-95 transition"
+                    className="ml-4 shrink-0 bg-blue-600 text-white text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-700 active:scale-95 transition"
                   >
                     View Route
                   </Link>
@@ -264,7 +264,7 @@ export default function DriverDashboard() {
         {/* ─── Connection Lost Warning ──────────────────────────────── */}
         {!socketConnected && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3">
-            <span className="w-3 h-3 rounded-full bg-red-500 flex-shrink-0" />
+            <span className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
             <div>
               <p className="text-sm font-semibold text-red-700">Connection Lost</p>
               <p className="text-xs text-red-600/80">Attempting to reconnect. New pickup requests may be delayed.</p>
@@ -319,7 +319,7 @@ export default function DriverDashboard() {
 
               {profileLoading ? (
                 <div className="mt-6 flex items-center justify-center py-8">
-                  <div className="w-7 h-7 border-3 border-primary/15 border-t-[var(--accent)] rounded-full animate-spin" />
+                  <div className="w-7 h-7 border-3 border-primary/15 border-t-accent rounded-full animate-spin" />
                 </div>
               ) : truck ? (
                 <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -395,7 +395,7 @@ export default function DriverDashboard() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                   {pendingPickups.length > 0 && (
-                    <span className="absolute -top-2 -right-2 min-w-[1.25rem] h-5 rounded-full bg-red-500 ring-4 ring-white animate-pulse flex items-center justify-center text-white text-[10px] font-bold px-1">
+                    <span className="absolute -top-2 -right-2 min-w-5 h-5 rounded-full bg-red-500 ring-4 ring-white animate-pulse flex items-center justify-center text-white text-[10px] font-bold px-1">
                       {pendingPickups.length}
                     </span>
                   )}
@@ -409,7 +409,7 @@ export default function DriverDashboard() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                   {driverAssignments.length > 0 && (
-                    <span className="absolute -top-2 -right-2 min-w-[1.25rem] h-5 rounded-full bg-blue-800 ring-4 ring-white flex items-center justify-center text-white text-[10px] font-bold px-1">
+                    <span className="absolute -top-2 -right-2 min-w-5 h-5 rounded-full bg-blue-800 ring-4 ring-white flex items-center justify-center text-white text-[10px] font-bold px-1">
                       {driverAssignments.length}
                     </span>
                   )}
@@ -426,7 +426,7 @@ export default function DriverDashboard() {
                 <StatusRow label="Socket" value={socketConnected ? "Live" : "Offline"} ok={socketConnected} />
                 <StatusRow label="Shift" value="Active" ok />
               </div>
-              <button className="mt-6 w-full py-3.5 rounded-2xl bg-[var(--accent)] text-white font-semibold hover:opacity-95 active:scale-[0.99] transition text-sm">
+              <button className="mt-6 w-full py-3.5 rounded-2xl bg-accent text-white font-semibold hover:opacity-95 active:scale-[0.99] transition text-sm">
                 Start Shift
               </button>
             </Card>

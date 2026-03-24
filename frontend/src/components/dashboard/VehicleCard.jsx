@@ -4,9 +4,9 @@ const VehicleCard = ({ vehicle }) => {
   const statusTone = {
     Collected: {
       bg: "bg-[#f2f7ee]",
-      border: "border-[var(--accent)]/25",
-      text: "text-[var(--accent)]",
-      dot: "bg-[var(--accent)]",
+      border: "border-accent/25",
+      text: "text-accent",
+      dot: "bg-accent",
     },
     "In Transit": {
       bg: "bg-blue-50",
@@ -43,7 +43,7 @@ const VehicleCard = ({ vehicle }) => {
       ? "bg-red-500"
       : fillPercentage >= 70
       ? "bg-orange-500"
-      : "bg-[var(--accent)]";
+      : "bg-accent";
 
   const typeLabel =
     vehicle.type === "NON_BIO" ? "Non-bio" : vehicle.type === "BIO" ? "Bio" : String(vehicle.type);

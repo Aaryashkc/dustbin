@@ -207,7 +207,7 @@ const Admins = () => {
           ) : filteredOrgGroups.map((group) => (
             <div key={group.orgName} className="bg-white rounded-2xl border border-primary/10 overflow-hidden shadow-sm">
               {/* Org header */}
-              <div className="px-5 py-3.5 bg-primary/[0.03] border-b border-primary/8 flex items-center gap-2.5">
+              <div className="px-5 py-3.5 bg-primary/3 border-b border-primary/8 flex items-center gap-2.5">
                 <Building2 className="w-4 h-4 text-primary/50" />
                 <span className="text-sm font-semibold text-primary">{group.orgName}</span>
                 <span className="ml-auto text-xs text-primary/40 bg-primary/5 px-2 py-0.5 rounded-full">
@@ -245,7 +245,7 @@ const Admins = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-primary/8 bg-primary/[0.03]">
+                <tr className="border-b border-primary/8 bg-primary/3">
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Admin</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Contact</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-primary/50 uppercase tracking-wider">Role</th>
@@ -265,7 +265,7 @@ const Admins = () => {
               </tbody>
             </table>
           </div>
-          <div className="px-5 py-3 border-t border-primary/8 bg-primary/[0.02] text-xs text-primary/40">
+          <div className="px-5 py-3 border-t border-primary/8 bg-primary/2 text-xs text-primary/40">
             Showing {filteredAdmins.length} of {admins.length} admin{admins.length !== 1 ? "s" : ""}
           </div>
         </div>
@@ -334,7 +334,7 @@ const Admins = () => {
                       <p className="text-xs text-violet-600">Can manage all organizations, admins, drivers, vehicles, districts, and system settings.</p>
                     </div>
                   ) : (
-                    <div className="p-3 rounded-xl bg-primary/[0.03] border border-primary/10 text-sm text-primary/70">
+                    <div className="p-3 rounded-xl bg-primary/3 border border-primary/10 text-sm text-primary/70">
                       <p className="font-semibold mb-1">Organization Admin</p>
                       <p className="text-xs text-primary/50">
                         Manages drivers, vehicles, and operations for {viewAdmin.organization?.name || "their assigned organization"}.
@@ -477,7 +477,7 @@ const Admins = () => {
 /* ── Admin table row (shared between grouped and flat views) ──────────── */
 function AdminRow({ a, isSuperAdmin, setViewAdmin, openEdit, setDeleteTarget, setFormError }) {
   return (
-    <tr className="border-b border-primary/5 hover:bg-primary/[0.02] transition-colors">
+    <tr className="border-b border-primary/5 hover:bg-primary/2 transition-colors">
       <td className="px-5 py-3.5">
         <div className="flex items-center gap-3">
           <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
@@ -546,8 +546,8 @@ function AdminRow({ a, isSuperAdmin, setViewAdmin, openEdit, setDeleteTarget, se
 /* ── Detail row helper ──────────────────────────────────────────────────── */
 function DetailRow({ icon, label, value }) {
   return (
-    <div className="flex items-start gap-3 p-3 rounded-xl bg-primary/[0.02] border border-primary/5">
-      <div className="mt-0.5 flex-shrink-0">{icon}</div>
+    <div className="flex items-start gap-3 p-3 rounded-xl bg-primary/2 border border-primary/5">
+      <div className="mt-0.5 shrink-0">{icon}</div>
       <div className="min-w-0">
         <p className="text-xs font-medium text-primary/40 uppercase tracking-wider">{label}</p>
         <div className="text-sm font-medium text-primary mt-0.5">{value}</div>

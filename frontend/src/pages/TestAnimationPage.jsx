@@ -146,7 +146,7 @@ export default function TestAnimationPage() {
       {/* Hero Section */}
       <section ref={heroRef} className="h-screen w-full flex flex-col items-center justify-center relative z-10 p-8 border-b border-slate-800/50">
         <div ref={heroTextRef} className="text-center max-w-3xl bg-slate-800/50 p-12 rounded-[3rem] backdrop-blur-sm border border-slate-700/50 shadow-2xl">
-          <h1 className="text-7xl font-black mb-6 bg-gradient-to-r from-green-400 via-emerald-500 to-blue-500 text-transparent bg-clip-text leading-tight">
+          <h1 className="text-7xl font-black mb-6 bg-linear-to-r from-green-400 via-emerald-500 to-blue-500 text-transparent bg-clip-text leading-tight">
             The Interactive<br/>Waste Journey
           </h1>
           <p className="text-2xl text-slate-300 font-light">

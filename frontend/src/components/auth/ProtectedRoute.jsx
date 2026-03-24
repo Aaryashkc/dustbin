@@ -15,7 +15,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#354f52] mx-auto" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
           <p className="mt-4 text-gray-600 font-['Poppins',sans-serif]">Loading...</p>
         </div>
       </div>

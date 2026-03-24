@@ -80,7 +80,7 @@ function CustomerLoginPage() {
             {/* Left Side - Form */}
             <div className="w-full max-w-xl mx-auto lg:mx-0">
               {/* Welcome Heading */}
-              <h2 className="font-['Outfit',sans-serif] font-bold text-4xl sm:text-5xl lg:text-6xl text-[#354f52] mb-8 sm:mb-12">
+              <h2 className="font-['Outfit',sans-serif] font-bold text-4xl sm:text-5xl lg:text-6xl text-primary mb-8 sm:mb-12">
                 <span className="block leading-tight mb-2">
                   Hello <span className="text-[#296200]">User</span>
                 </span>
@@ -94,7 +94,7 @@ function CustomerLoginPage() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block font-['Poppins',sans-serif] text-lg sm:text-xl text-[#354f52] mb-3"
+                    className="block font-['Poppins',sans-serif] text-lg sm:text-xl text-primary mb-3"
                   >
                     Enter your email to continue
                   </label>
@@ -112,7 +112,7 @@ function CustomerLoginPage() {
                     disabled={isLoading}
                     aria-invalid={error ? 'true' : 'false'}
                     aria-describedby={error ? 'email-error' : undefined}
-                    className={`w-full sm:w-80 border ${error ? 'border-red-500' : 'border-black'} border-solid h-12 sm:h-14 rounded-xl px-4 sm:px-5 font-['Poppins',sans-serif] text-sm sm:text-base text-[#354f52] placeholder:text-[#757575] focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all`}
+                    className={`w-full sm:w-80 border ${error ? 'border-red-500' : 'border-black'} border-solid h-12 sm:h-14 rounded-xl px-4 sm:px-5 font-['Poppins',sans-serif] text-sm sm:text-base text-primary placeholder:text-[#757575] focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all`}
                   />
 
                   {error && (
@@ -126,7 +126,7 @@ function CustomerLoginPage() {
                 <button
                   onClick={handleLogin}
                   disabled={isLoading}
-                  className="bg-[#354f52] flex gap-3 h-12 sm:h-14 items-center justify-center px-8 sm:px-10 rounded-2xl hover:bg-[#2a3f41] transition-all active:scale-95 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-[#354f52] focus:ring-offset-2 shadow-md"
+                  className="bg-primary flex gap-3 h-12 sm:h-14 items-center justify-center px-8 sm:px-10 rounded-2xl hover:bg-[#2a3f41] transition-all active:scale-95 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-md"
                   aria-label="Log in to your account"
                 >
                   <span className="font-['Inter',sans-serif] font-medium text-[#f5f1e8] text-lg sm:text-xl">
@@ -165,7 +165,7 @@ function CustomerLoginPage() {
             {/* Right Side - Hero Image */}
             <div className="hidden lg:block">
               <div
-                className="relative w-full aspect-[4/5] max-w-md xl:max-w-lg mx-auto"
+                className="relative w-full aspect-4/5 max-w-md xl:max-w-lg mx-auto"
                 role="img"
                 aria-label="Waste management worker in orange uniform"
               >
@@ -177,7 +177,7 @@ function CustomerLoginPage() {
                 />
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 border-[#84a98c] border-8 sm:border-[12px] lg:border-[16px] rounded-2xl pointer-events-none"
+                  className="absolute inset-0 border-[#84a98c] border-8 sm:border-12 lg:border-16 rounded-2xl pointer-events-none"
                 />
               </div>
             </div>

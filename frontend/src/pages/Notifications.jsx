@@ -333,7 +333,7 @@ const Notifications = () => {
                       <div className="p-4 sm:p-5">
                         <div className="flex items-start gap-3">
                           {/* Icon */}
-                          <div className="flex-shrink-0 mt-0.5">
+                          <div className="shrink-0 mt-0.5">
                             {TYPE_ICONS[alert.type] || TYPE_ICONS.general}
                           </div>
 
@@ -343,7 +343,7 @@ const Notifications = () => {
                               <div className="flex items-center gap-2 flex-wrap">
                                 <h3 className="font-semibold text-primary text-sm">{alert.title}</h3>
                                 {!alert.isRead && (
-                                  <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                                  <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
                                 )}
                                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${sev.badge}`}>
                                   {alert.severity}
@@ -424,7 +424,7 @@ const Notifications = () => {
                   <div className="p-4 sm:p-5">
                     <div className="flex items-start gap-3">
                       {/* Unread indicator */}
-                      <div className="flex-shrink-0 mt-1">
+                      <div className="shrink-0 mt-1">
                         {msg.status === "unread" ? (
                           <span className="flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75" />
@@ -456,7 +456,7 @@ const Notifications = () => {
                           </span>
                         </div>
 
-                        <div className="mt-2 bg-primary/[0.03] p-3 rounded-lg border border-primary/5 text-sm text-primary/80 leading-relaxed max-h-32 overflow-y-auto">
+                        <div className="mt-2 bg-primary/3 p-3 rounded-lg border border-primary/5 text-sm text-primary/80 leading-relaxed max-h-32 overflow-y-auto">
                           {msg.message}
                         </div>
 

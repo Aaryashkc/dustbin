@@ -45,7 +45,7 @@ const PickupStats = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-10 h-10 border-4 border-primary/20 border-t-[var(--accent)] rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-primary/20 border-t-accent rounded-full animate-spin" />
       </div>
     );
   }
@@ -202,7 +202,7 @@ const PickupStats = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-primary/[0.03]">
+                <tr className="bg-primary/3">
                   <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">#</th>
                   <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">Driver</th>
                   <th className="px-5 py-3 text-xs font-bold text-primary/60 uppercase tracking-wider">Completed</th>
@@ -214,7 +214,7 @@ const PickupStats = () => {
               </thead>
               <tbody className="divide-y divide-primary/5">
                 {data.driverStats.map((d, i) => (
-                  <tr key={d.driverId} className="hover:bg-primary/[0.02] transition">
+                  <tr key={d.driverId} className="hover:bg-primary/2 transition">
                     <td className="px-5 py-3">
                       <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                         i === 0 ? "bg-yellow-100 text-yellow-700" :
@@ -227,7 +227,7 @@ const PickupStats = () => {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-[var(--accent)]/30 flex items-center justify-center text-xs font-bold text-primary">
+                        <div className="w-8 h-8 rounded-full bg-accent/30 flex items-center justify-center text-xs font-bold text-primary">
                           {d.driverName?.charAt(0)?.toUpperCase() || "?"}
                         </div>
                         <span className="font-semibold text-primary">{d.driverName}</span>
