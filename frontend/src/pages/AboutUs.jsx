@@ -210,7 +210,7 @@ export default function AboutUs() {
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/75 to-black/50" />
-        <div className="relative z-10 w-full px-6 md:px-16 lg:px-24 py-28">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 py-28">
           <div className="max-w-3xl">
             <Reveal>
               <span className="inline-block text-white/60 text-sm font-semibold tracking-widest uppercase mb-4">

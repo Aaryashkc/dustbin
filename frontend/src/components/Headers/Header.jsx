@@ -13,7 +13,8 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const profileRef = useRef(null);
 
-  const isLandingPage = location.pathname === "/";
+  const transparentHeaderRoutes = new Set(["/", "/about-us", "/contact-us"]);
+  const isTransparentRoute = transparentHeaderRoutes.has(location.pathname);
 
   // Track scroll position
   useEffect(() => {
@@ -51,7 +52,7 @@ export function Header() {
   const navLinks = isAuthenticated && user ? getNavLinks(user.role) : [];
 
   // Determine header style based on scroll and page
-  const isTransparent = isLandingPage && !scrolled && !mobileOpen;
+  const isTransparent = isTransparentRoute && !scrolled && !mobileOpen;
   const headerBg = isTransparent
     ? "bg-transparent"
     : "bg-primary backdrop-blur-md";

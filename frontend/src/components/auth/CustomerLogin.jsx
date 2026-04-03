@@ -47,7 +47,7 @@ function CustomerLoginPage() {
   return (
     <div className="min-h-screen relative flex items-center justify-center px-4 py-10 bg-white">
       {/* Split card */}
-      <div className="relative z-10 w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row min-h-[540px] border border-gray-100">
+      <div className="relative z-10 w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row min-h-135 border border-gray-100">
         {/* Left — Welcome panel */}
         <div className="relative md:w-1/2 flex flex-col justify-center px-12 py-14 md:py-20 overflow-hidden">
           <div
@@ -56,7 +56,7 @@ function CustomerLoginPage() {
               backgroundImage: `url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800&q=80')`,
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#354f52]/90 to-[#2f3e46]/85" />
+          <div className="absolute inset-0 bg-linear-to-br from-primary/90 to-[#2f3e46]/85" />
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center">
