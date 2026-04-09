@@ -20,6 +20,7 @@ import areaRoutes from "./routes/area.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 import historyRoutes from "./routes/history.route.js";
 import pricingConfigRoutes from "./routes/pricingConfig.route.js";
+import paymentRoutes from "./routes/payment.route.js";
 import { cleanupExpiredUploads } from "./controllers/upload.controller.js";
 import { autoGenerateMLSchedule } from "./controllers/mlSchedule.controller.js";
 import { initSocket } from "./socket/socketServer.js";
@@ -66,6 +67,7 @@ app.use("/api/areas", areaRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/pricing-config", pricingConfigRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // Health check
 app.get("/", (req, res) => {

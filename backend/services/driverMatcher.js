@@ -3,10 +3,16 @@ import Truck from "../models/Truck.model.js";
 import Area from "../models/Area.model.js";
 
 // ── Configuration ──────────────────────────────────────────────────────────────
+// NOTE: Category-based filtering/scoring has been intentionally disabled.
+// Any truck can now take any waste category — the customer's `category`
+// selection is still stored on the PickupRequest and surfaced to admins
+// and drivers, but it no longer influences which truck gets matched.
+// The categoryScore() helper below is preserved so it can be re-enabled
+// later by restoring a non-zero `category` weight here.
 const WEIGHTS = {
-    proximity: 0.4,
-    category: 0.3,
-    level: 0.3,
+    proximity: 0.5,
+    category: 0,   // disabled — kept at 0 to preserve the formula shape
+    level: 0.5,
 };
 
 const MAX_RADIUS_KM = 30;       // drivers further than this get proximityScore = 0
@@ -48,6 +54,9 @@ function proximityScore(driverLat, driverLon, pickupLat, pickupLon) {
  *   recyclable   → BIO=1, NON_BIO=0, MIXED=0.8
  *   non-recyclable → NON_BIO=1, BIO=0, MIXED=0.8
  *   both         → MIXED=1, BIO=0.5, NON_BIO=0.5
+ *
+ * NOTE: Currently NOT used in matching (WEIGHTS.category = 0). Kept here
+ * intentionally so the rule set can be restored later without rewriting it.
  */
 function categoryScore(wasteCategory, truckType) {
     const matrix = {
@@ -81,7 +90,9 @@ function levelScore(wasteLevel, dutyType) {
  * Filters:
  *  1. Area → Org: only drivers whose truck belongs to the area's organization
  *  2. Capacity: truck must meet minimum capacity for the waste level
- *  3. Category: truck type must be compatible with waste category
+ *  (Category compatibility is intentionally NOT enforced — any truck can
+ *   handle any waste category. Customer's category selection is preserved
+ *   on the PickupRequest for admin/driver visibility only.)
  *
  * @param {Object} pickup - { latitude, longitude, category, level, orgId?, area? }
  * @returns {Promise<Array<{ userId: string, score: number }>>}
@@ -135,17 +146,15 @@ export async function findBestDrivers(pickup) {
                 latitude,
                 longitude
             );
+            // Category score still computed for visibility/debugging but
+            // not used in the total (WEIGHTS.category = 0).
             const cScore = categoryScore(category, truck.truckType);
             const lScore = levelScore(level, truck.dutyType);
 
-            // If the category score is strictly 0, the truck is fundamentally incompatible.
-            let total = 0;
-            if (cScore > 0) {
-                total =
-                    WEIGHTS.proximity * pScore +
-                    WEIGHTS.category * cScore +
-                    WEIGHTS.level * lScore;
-            }
+            const total =
+                WEIGHTS.proximity * pScore +
+                WEIGHTS.category * cScore +
+                WEIGHTS.level * lScore;
 
             return {
                 driverId: d._id,

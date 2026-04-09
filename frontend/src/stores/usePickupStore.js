@@ -66,6 +66,7 @@ const usePickupStore = create((set, get) => ({
                 level: extras.level || "easy",
                 wasteUploadId: extras.wasteUploadId || null,
                 area: extras.area || null,
+                paymentMethod: extras.paymentMethod === "esewa" ? "esewa" : "cash",
                 // Pricing data from estimate
                 estimatedPrice: estimate?.estimatedPrice || null,
                 priceBreakdown: estimate?.priceBreakdown || null,

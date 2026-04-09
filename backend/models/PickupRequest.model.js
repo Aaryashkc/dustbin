@@ -146,6 +146,31 @@ const pickupRequestSchema = new mongoose.Schema(
       address: { type: String, default: null },
     },
 
+    // ── Payment ─────────────────────────────────────────────────────────
+    // Method chosen by the customer at booking time.
+    paymentMethod: {
+      type: String,
+      enum: ["cash", "esewa"],
+      default: "cash",
+      index: true,
+    },
+    // High-level payment state — driven by the Payment record(s) for this pickup.
+    //   UNPAID  — no payment attempted yet (initial)
+    //   PENDING — eSewa initiated, awaiting verification, or cash awaiting collection
+    //   PAID    — verified by gateway / collected by driver and confirmed
+    //   FAILED  — gateway failure or driver-reported non-payment
+    paymentStatus: {
+      type: String,
+      enum: ["UNPAID", "PENDING", "PAID", "FAILED"],
+      default: "UNPAID",
+      index: true,
+    },
+    paymentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Payment",
+      default: null,
+    },
+
     // Response time metrics (computed on acceptance)
     responseTimeMs: { type: Number, default: null },
     // Total task duration (computed on completion)

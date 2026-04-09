@@ -41,6 +41,9 @@ function pickupPayload(doc) {
     routeDistanceKm: doc.routeDistanceKm,
     routeDurationMinutes: doc.routeDurationMinutes,
     depotLocation: doc.depotLocation,
+    paymentMethod: doc.paymentMethod,
+    paymentStatus: doc.paymentStatus,
+    paymentId: doc.paymentId,
     responseTimeMs: doc.responseTimeMs,
     taskDurationMs: doc.taskDurationMs,
     expiresAt: doc.expiresAt,
@@ -75,6 +78,31 @@ function emitSafe(fn) {
  * Returns a price estimate + route BEFORE the customer confirms the pickup.
  * Looks up the area → org → depot, calculates road route via ORS, and prices it.
  */
+/**
+ * Driver: get a live ORS driving route from current location to a pickup destination.
+ * Body: { originLat, originLng, destLat, destLng }
+ * Returns: { distanceKm, durationMinutes, geometry, fallback }
+ */
+export const getDriverRoute = async (req, res) => {
+  try {
+    const { originLat, originLng, destLat, destLng } = req.body || {};
+    if (
+      originLat == null || originLng == null ||
+      destLat == null || destLng == null
+    ) {
+      return res.status(400).json({ message: "originLat, originLng, destLat, destLng are required" });
+    }
+    const route = await getRoute(
+      { latitude: Number(originLat), longitude: Number(originLng) },
+      { latitude: Number(destLat), longitude: Number(destLng) },
+    );
+    return res.json({ success: true, ...route });
+  } catch (err) {
+    console.error("getDriverRoute error:", err);
+    return res.status(500).json({ message: "Failed to compute route" });
+  }
+};
+
 export const estimatePickup = async (req, res) => {
   try {
     const { latitude, longitude, category, level, area } = req.body;
@@ -188,7 +216,13 @@ export const createPickup = async (req, res) => {
     const {
       latitude, longitude, address, category, level, wasteUploadId, province, area,
       estimatedPrice, priceBreakdown, routeDistanceKm, routeDurationMinutes, routeGeometry, depotLocation,
+      paymentMethod,
     } = req.body;
+
+    // Whitelist payment method — never trust arbitrary client values
+    const safePaymentMethod = ["cash", "esewa"].includes(paymentMethod)
+      ? paymentMethod
+      : "cash";
 
     if (!latitude || !longitude) {
       return res.status(400).json({ message: "latitude and longitude are required" });
@@ -224,6 +258,8 @@ export const createPickup = async (req, res) => {
       routeDurationMinutes: routeDurationMinutes || null,
       routeGeometry: routeGeometry || null,
       depotLocation: depotLocation || null,
+      paymentMethod: safePaymentMethod,
+      paymentStatus: "UNPAID",
       statusHistory: [
         {
           from: null,

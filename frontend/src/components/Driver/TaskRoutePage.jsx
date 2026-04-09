@@ -1,30 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import api from "../../utils/api";
-
-/* Fix default Leaflet marker icon in bundled envs */
-import L from "leaflet";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
-
-function ChangeView({ center }) {
-  const map = useMap();
-  useEffect(() => {
-    if (center) map.setView(center, 15, { animate: true });
-  }, [center, map]);
-  return null;
-}
+import DriverRouteMap from "./DriverRouteMap";
+import PaymentBadge from "./PaymentBadge";
 
 export default function TaskRoutePage() {
+  const [mapFullscreen, setMapFullscreen] = useState(false);
   const { pickupId } = useParams();
   const navigate = useNavigate();
   const routerLocation = useLocation();
@@ -177,46 +158,36 @@ export default function TaskRoutePage() {
         {/* Map + Start button */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map */}
-          <div className="lg:col-span-2 bg-white rounded-3xl border border-primary/15 shadow-sm overflow-hidden">
-            <div className="px-5 py-3 bg-linear-to-r from-blue-600 to-blue-500 flex items-center gap-2">
+          <div className="lg:col-span-2 bg-white rounded-3xl border-2 border-[#354f52]/20 shadow-sm overflow-hidden">
+            <div className="px-5 py-3 bg-[#354f52] flex items-center gap-2">
               <MapPinIcon />
-              <span className="text-white text-sm font-semibold">PICKUP LOCATION</span>
+              <span className="text-white text-sm font-extrabold">LIVE NAVIGATION</span>
             </div>
-            <div className="h-87.5 sm:h-100">
-              {hasCoords ? (
-                <MapContainer
-                  center={mapCenter}
-                  zoom={15}
-                  style={{ height: "100%", width: "100%" }}
-                  scrollWheelZoom={true}
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution="&copy; OpenStreetMap contributors"
-                  />
-                  <ChangeView center={mapCenter} />
-                  <Marker position={mapCenter} />
-                </MapContainer>
-              ) : (
-                <div className="h-full flex items-center justify-center bg-gray-50">
-                  <div className="text-center text-primary/50">
-                    <MapPinLargeIcon />
-                    <p className="mt-2 text-sm font-medium">No coordinates available</p>
-                  </div>
-                </div>
-              )}
-            </div>
+            <DriverRouteMap
+              destination={hasCoords ? { latitude: lat, longitude: lng, address: loc.address } : null}
+              mode="inline"
+              onExpand={() => setMapFullscreen(true)}
+            />
             {hasCoords && (
-              <div className="px-5 py-3 border-t border-primary/10 bg-gray-50/50">
-                <p className="text-xs text-primary/60 font-medium">
+              <div className="px-5 py-3 border-t border-[#354f52]/15 bg-[#354f52]/5">
+                <p className="text-xs text-[#1f2e30] font-bold">
                   📍 {loc.address || `${lat.toFixed(5)}, ${lng.toFixed(5)}`}
                 </p>
               </div>
             )}
           </div>
 
+          {mapFullscreen && (
+            <DriverRouteMap
+              destination={hasCoords ? { latitude: lat, longitude: lng, address: loc.address } : null}
+              mode="full"
+              onCollapse={() => setMapFullscreen(false)}
+            />
+          )}
+
           {/* Action panel */}
           <div className="space-y-4">
+            <PaymentBadge pickup={pickup} />
             <div className="bg-white rounded-3xl border border-primary/15 shadow-sm p-6">
               <p className="text-sm font-semibold text-primary mb-4">
                 TASK STATUS

@@ -1,6 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../../utils/api";
+import DriverRouteMap from "./DriverRouteMap";
+import PaymentBadge from "./PaymentBadge";
 
 /**
  * Task flow with real pickup data:
@@ -52,6 +54,7 @@ export default function TaskFlow() {
 
   // Page state: 1 = Update Status, 2 = Task Execution
   const [page, setPage] = useState(1);
+  const [mapFullscreen, setMapFullscreen] = useState(false);
 
   // Current pickup status tracking
   const [currentStatus, setCurrentStatus] = useState("EN_ROUTE");
@@ -87,6 +90,12 @@ export default function TaskFlow() {
       setCurrentStatus(newStatus);
       if (newStatus === "COMPLETED") {
         setCompletedAt(nowTimeLabel());
+        // Refetch the pickup so we get the latest paymentMethod / paymentStatus
+        // (the customer may have switched to eSewa after the driver accepted).
+        try {
+          const fresh = await api.get(`/pickups/${pickupId}`);
+          if (fresh.data?.pickup) setPickup(fresh.data.pickup);
+        } catch { /* non-fatal */ }
       }
       return true;
     } catch (err) {
@@ -193,6 +202,29 @@ export default function TaskFlow() {
           </div>
         )}
 
+        {/* Persistent mini-map (always visible during task) */}
+        {pickup && !isCompleted && (
+          <div className="mb-6 bg-white rounded-2xl border-2 border-[#354f52]/20 shadow-sm overflow-hidden">
+            <div className="px-4 py-2 bg-[#354f52] text-white text-xs font-extrabold flex items-center justify-between">
+              <span>LIVE NAVIGATION</span>
+              <span className="text-[10px] font-bold text-white/80">Tap ⤢ to expand</span>
+            </div>
+            <DriverRouteMap
+              destination={pickup.location}
+              mode="mini"
+              onExpand={() => setMapFullscreen(true)}
+            />
+          </div>
+        )}
+
+        {mapFullscreen && (
+          <DriverRouteMap
+            destination={pickup?.location}
+            mode="full"
+            onCollapse={() => setMapFullscreen(false)}
+          />
+        )}
+
         {/* ALL DONE STATE */}
         {isCompleted ? (
           <div className="bg-white rounded-3xl border border-primary/15 shadow-sm p-8">
@@ -217,6 +249,12 @@ export default function TaskFlow() {
               <CompletedDetail label="LEVEL" value={level.toUpperCase()} />
               <CompletedDetail label="LOCATION" value={loc.address || "—"} />
               <CompletedDetail label="COMPLETED AT" value={completedAt || "—"} />
+            </div>
+
+            {/* Payment status — shown AFTER completion so the driver knows
+                whether the customer pre-paid online or owes cash. */}
+            <div className="mb-6">
+              <PaymentBadge pickup={pickup} />
             </div>
 
             <button

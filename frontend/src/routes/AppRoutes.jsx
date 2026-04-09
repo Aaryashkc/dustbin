@@ -19,6 +19,7 @@ import CustomerDashboard from "../components/users/CustomerDashboard";
 import SchedulePage from "../components/users/SchedulePage";
 import UploadWastePage from "../components/users/UploadWastePage";
 import SearchPage from "../components/sub-components/Searching";
+import PaymentSuccessPage from "../components/sub-components/PaymentSuccessPage";
 import DriverDashboard from "../components/Driver/DriverDashboard";
 import AcceptTaskPage from "../components/Driver/AcceptTaskPage";
 import TaskRoutePage from "../components/Driver/TaskRoutePage";
@@ -119,6 +120,18 @@ const AppRoutes = () => {
               <UploadWastePage />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/payment-success"
+          element={
+            <ProtectedRoute allowedRoles={['customer_admin']}>
+              <PaymentSuccessPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-failed"
+          element={<Navigate to="/customer-dashboard?paymentFailed=1" replace />}
         />
         <Route
           path="/searching"

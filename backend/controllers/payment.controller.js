@@ -1,0 +1,411 @@
+import mongoose from "mongoose";
+import Payment from "../models/Payment.model.js";
+import PickupRequest from "../models/PickupRequest.model.js";
+import {
+  buildEsewaInitiationPayload,
+  decodeAndVerifyCallback,
+  verifyTransactionStatus,
+} from "../services/esewaService.js";
+
+/**
+ * Payment controller — handles payment-method selection, eSewa initiation,
+ * eSewa callback verification, cash collection, and read endpoints.
+ *
+ * Security rules enforced here
+ * ────────────────────────────
+ *  - The customer can only initiate payment for a pickup THEY own.
+ *  - The amount is ALWAYS read from the database (PickupRequest.estimatedPrice),
+ *    never from the request body.
+ *  - eSewa callbacks are verified twice: signature check + status API.
+ *  - Idempotency: a Payment moves from PENDING → COMPLETED via an atomic
+ *    findOneAndUpdate guarded by `status: "PENDING"`. Duplicate callbacks
+ *    are no-ops.
+ *  - Cash payments can only be marked PAID by the assigned driver, and only
+ *    once the pickup is COMPLETED.
+ *  - Admin/super_admin can read but not silently mutate payment status.
+ */
+
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
+function paymentPayload(p) {
+  if (!p) return null;
+  return {
+    id: p._id,
+    pickupId: p.pickupId,
+    customerId: p.customerId,
+    driverId: p.driverId,
+    amount: p.amount,
+    currency: p.currency,
+    method: p.method,
+    status: p.status,
+    esewaRefId: p.esewaRefId,
+    initiatedAt: p.initiatedAt,
+    paidAt: p.paidAt,
+    failedAt: p.failedAt,
+    createdAt: p.createdAt,
+    updatedAt: p.updatedAt,
+  };
+}
+
+// ── POST /api/payments/initiate ───────────────────────────────────────────
+/**
+ * Customer chooses how they want to pay for an existing pickup.
+ *
+ * Body: { pickupId, method: "cash" | "esewa" }
+ *
+ * Behaviour
+ *  - cash:  records intent, marks pickup paymentMethod=cash, paymentStatus=PENDING
+ *  - esewa: creates a Payment row, returns the SIGNED form fields the
+ *           browser must POST to eSewa to start the hosted checkout.
+ */
+export const initiatePayment = async (req, res) => {
+  try {
+    const { pickupId, method } = req.body;
+    const customer = req.user;
+
+    if (!pickupId || !mongoose.isValidObjectId(pickupId)) {
+      return res.status(400).json({ message: "Valid pickupId is required" });
+    }
+    if (!["cash", "esewa"].includes(method)) {
+      return res.status(400).json({ message: "method must be 'cash' or 'esewa'" });
+    }
+
+    // 1. Authorisation: only the owning customer may initiate payment
+    const pickup = await PickupRequest.findById(pickupId);
+    if (!pickup) return res.status(404).json({ message: "Pickup not found" });
+    if (pickup.customerId.toString() !== customer._id.toString()) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    // 2. Reject if already paid (idempotent guard)
+    if (pickup.paymentStatus === "PAID") {
+      return res.status(409).json({ message: "This pickup is already paid" });
+    }
+
+    // 3. Trust ONLY the server-side amount
+    const amount = Number(pickup.estimatedPrice);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return res.status(400).json({
+        message: "Pickup has no valid price — cannot initiate payment",
+      });
+    }
+
+    // ── Cash flow ────────────────────────────────────────────────────────
+    if (method === "cash") {
+      const payment = await Payment.create({
+        pickupId: pickup._id,
+        customerId: customer._id,
+        amount,
+        currency: pickup.currency || "NPR",
+        method: "cash",
+        status: "PENDING",
+      });
+
+      pickup.paymentMethod = "cash";
+      pickup.paymentStatus = "PENDING";
+      pickup.paymentId = payment._id;
+      await pickup.save();
+
+      return res.status(200).json({
+        success: true,
+        method: "cash",
+        payment: paymentPayload(payment),
+      });
+    }
+
+    // ── eSewa flow ───────────────────────────────────────────────────────
+    // Build the signed form payload (signature is computed server-side using
+    // the env secret — the client never sees the secret).
+    const { transactionUuid, actionUrl, formFields } = buildEsewaInitiationPayload({
+      amount,
+      pickupId: pickup._id.toString(),
+    });
+
+    const payment = await Payment.create({
+      pickupId: pickup._id,
+      customerId: customer._id,
+      amount,
+      currency: pickup.currency || "NPR",
+      method: "esewa",
+      status: "PENDING",
+      transactionUuid,
+    });
+
+    pickup.paymentMethod = "esewa";
+    pickup.paymentStatus = "PENDING";
+    pickup.paymentId = payment._id;
+    await pickup.save();
+
+    return res.status(200).json({
+      success: true,
+      method: "esewa",
+      actionUrl,
+      formFields,
+      payment: paymentPayload(payment),
+    });
+  } catch (err) {
+    console.error("initiatePayment error:", err.message);
+    return res.status(500).json({ message: "Failed to initiate payment" });
+  }
+};
+
+// ── GET /api/payments/esewa/success ───────────────────────────────────────
+/**
+ * eSewa redirects the customer's browser here after a successful payment.
+ *
+ * Steps
+ *  1. Decode + verify the HMAC signature on the base64 payload
+ *  2. Independently call eSewa's status API server-to-server
+ *  3. Atomically transition the Payment from PENDING → COMPLETED
+ *  4. Update the PickupRequest paymentStatus
+ *  5. Redirect the browser back to the frontend
+ *
+ * This endpoint is intentionally unauthenticated (eSewa cannot send our JWT),
+ * but it is safe because every state change is gated on a valid signature
+ * AND a successful status API verification.
+ */
+export const esewaSuccess = async (req, res) => {
+  try {
+    const { data } = req.query;
+
+    // 1. Verify signature on the redirect payload
+    let decoded;
+    try {
+      decoded = decodeAndVerifyCallback(data);
+    } catch (err) {
+      console.warn("[esewa] callback verification failed:", err.message);
+      return res.redirect(`${FRONTEND_URL}/payment-failed?reason=invalid_signature`);
+    }
+
+    const { transaction_uuid: transactionUuid, total_amount: totalAmountStr } = decoded;
+
+    // 2. Look up the payment we created at initiation
+    const payment = await Payment.findOne({ transactionUuid });
+    if (!payment) {
+      return res.redirect(`${FRONTEND_URL}/payment-failed?reason=unknown_transaction`);
+    }
+
+    // Already settled? Just redirect — idempotent.
+    if (payment.status === "COMPLETED") {
+      return res.redirect(
+        `${FRONTEND_URL}/payment-success?pickupId=${payment.pickupId}`
+      );
+    }
+
+    // 3. Confirm the amount matches what we expect (defends against tampering)
+    const callbackAmount = Number(String(totalAmountStr).replace(/,/g, ""));
+    if (!Number.isFinite(callbackAmount) || callbackAmount !== payment.amount) {
+      console.warn(
+        `[esewa] amount mismatch for ${transactionUuid}: expected ${payment.amount}, got ${callbackAmount}`
+      );
+      return res.redirect(`${FRONTEND_URL}/payment-failed?reason=amount_mismatch`);
+    }
+
+    // 4. Independent server-to-server verification with eSewa
+    let statusResp;
+    try {
+      statusResp = await verifyTransactionStatus({
+        transactionUuid,
+        totalAmount: payment.amount,
+      });
+    } catch (err) {
+      console.error("[esewa] status API error:", err.message);
+      return res.redirect(`${FRONTEND_URL}/payment-failed?reason=verification_failed`);
+    }
+
+    if (statusResp?.status !== "COMPLETE") {
+      // Mark as failed but only if still PENDING
+      await Payment.updateOne(
+        { _id: payment._id, status: "PENDING" },
+        {
+          status: "FAILED",
+          esewaStatus: statusResp?.status || "UNKNOWN",
+          failedAt: new Date(),
+          failureReason: `eSewa status: ${statusResp?.status}`,
+        }
+      );
+      await PickupRequest.updateOne(
+        { _id: payment.pickupId },
+        { paymentStatus: "FAILED" }
+      );
+      return res.redirect(`${FRONTEND_URL}/payment-failed?reason=not_complete`);
+    }
+
+    // 5. Atomic transition PENDING → COMPLETED (idempotent)
+    const updated = await Payment.findOneAndUpdate(
+      { _id: payment._id, status: "PENDING" },
+      {
+        status: "COMPLETED",
+        esewaStatus: "COMPLETE",
+        esewaRefId: statusResp.ref_id || null,
+        paidAt: new Date(),
+      },
+      { new: true }
+    );
+
+    if (updated) {
+      await PickupRequest.updateOne(
+        { _id: payment.pickupId },
+        { paymentStatus: "PAID" }
+      );
+    }
+
+    return res.redirect(
+      `${FRONTEND_URL}/payment-success?pickupId=${payment.pickupId}`
+    );
+  } catch (err) {
+    console.error("esewaSuccess error:", err.message);
+    return res.redirect(`${FRONTEND_URL}/payment-failed?reason=server_error`);
+  }
+};
+
+// ── GET /api/payments/esewa/failure ───────────────────────────────────────
+export const esewaFailure = async (req, res) => {
+  try {
+    const { data } = req.query;
+    if (data) {
+      try {
+        const decoded = decodeAndVerifyCallback(data);
+        await Payment.updateOne(
+          { transactionUuid: decoded.transaction_uuid, status: "PENDING" },
+          {
+            status: "FAILED",
+            esewaStatus: decoded.status || "FAILED",
+            failedAt: new Date(),
+            failureReason: "User cancelled or eSewa reported failure",
+          }
+        );
+      } catch {
+        // Signature failure — ignore silently, do not mutate state
+      }
+    }
+    return res.redirect(`${FRONTEND_URL}/payment-failed?reason=cancelled`);
+  } catch (err) {
+    console.error("esewaFailure error:", err.message);
+    return res.redirect(`${FRONTEND_URL}/payment-failed?reason=server_error`);
+  }
+};
+
+// ── POST /api/payments/:pickupId/cash-collected ───────────────────────────
+/**
+ * Driver marks a CASH payment as collected.
+ *
+ *  - Only the assigned driver may call this
+ *  - Pickup must be COMPLETED (you cannot collect cash before the job is done)
+ *  - Method must be cash
+ *  - Atomic transition PENDING → COMPLETED
+ */
+export const markCashCollected = async (req, res) => {
+  try {
+    const { pickupId } = req.params;
+    const driver = req.user;
+
+    if (!mongoose.isValidObjectId(pickupId)) {
+      return res.status(400).json({ message: "Invalid pickupId" });
+    }
+
+    const pickup = await PickupRequest.findById(pickupId);
+    if (!pickup) return res.status(404).json({ message: "Pickup not found" });
+
+    if (!pickup.driverId || pickup.driverId.toString() !== driver._id.toString()) {
+      return res.status(403).json({ message: "Only the assigned driver may settle this payment" });
+    }
+    if (pickup.paymentMethod !== "cash") {
+      return res.status(400).json({ message: "Pickup is not a cash payment" });
+    }
+    if (pickup.status !== "COMPLETED") {
+      return res.status(400).json({ message: "Pickup must be COMPLETED before collecting cash" });
+    }
+    if (pickup.paymentStatus === "PAID") {
+      return res.status(200).json({ success: true, message: "Already settled" });
+    }
+
+    const payment = await Payment.findOneAndUpdate(
+      { pickupId: pickup._id, method: "cash", status: "PENDING" },
+      {
+        status: "COMPLETED",
+        paidAt: new Date(),
+        driverId: driver._id,
+        finalizedBy: { userId: driver._id, role: driver.role, name: driver.name },
+      },
+      { new: true }
+    );
+
+    if (!payment) {
+      return res.status(409).json({ message: "No pending cash payment to settle" });
+    }
+
+    pickup.paymentStatus = "PAID";
+    await pickup.save();
+
+    return res.status(200).json({ success: true, payment: paymentPayload(payment) });
+  } catch (err) {
+    console.error("markCashCollected error:", err.message);
+    return res.status(500).json({ message: "Failed to mark cash collected" });
+  }
+};
+
+// ── GET /api/payments/pickup/:pickupId ────────────────────────────────────
+export const getPaymentByPickup = async (req, res) => {
+  try {
+    const { pickupId } = req.params;
+    if (!mongoose.isValidObjectId(pickupId)) {
+      return res.status(400).json({ message: "Invalid pickupId" });
+    }
+
+    const pickup = await PickupRequest.findById(pickupId).select(
+      "customerId driverId orgId"
+    );
+    if (!pickup) return res.status(404).json({ message: "Pickup not found" });
+
+    const { _id, role } = req.user;
+    const isOwner = pickup.customerId.toString() === _id.toString();
+    const isAssignedDriver =
+      pickup.driverId && pickup.driverId.toString() === _id.toString();
+    const isAdmin = role === "admin" || role === "super_admin";
+
+    if (!isOwner && !isAssignedDriver && !isAdmin) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const payment = await Payment.findOne({ pickupId }).sort({ createdAt: -1 });
+    return res.status(200).json({ payment: paymentPayload(payment) });
+  } catch (err) {
+    console.error("getPaymentByPickup error:", err.message);
+    return res.status(500).json({ message: "Failed to fetch payment" });
+  }
+};
+
+// ── GET /api/payments/all (admin) ─────────────────────────────────────────
+export const getAllPayments = async (req, res) => {
+  try {
+    const { method, status, limit = 100 } = req.query;
+    const filter = {};
+    if (method) filter.method = method;
+    if (status) filter.status = status;
+
+    const payments = await Payment.find(filter)
+      .sort({ createdAt: -1 })
+      .limit(Math.min(Number(limit) || 100, 500))
+      .lean();
+
+    const totals = await Payment.aggregate([
+      { $match: { status: "COMPLETED" } },
+      {
+        $group: {
+          _id: "$method",
+          total: { $sum: "$amount" },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      payments: payments.map(paymentPayload),
+      totals,
+    });
+  } catch (err) {
+    console.error("getAllPayments error:", err.message);
+    return res.status(500).json({ message: "Failed to fetch payments" });
+  }
+};

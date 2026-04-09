@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import ThankYouPage from "./ThankYouPage";
 import { getSocket } from "../../utils/socket";
 import usePickupStore from "../../stores/usePickupStore";
+import usePaymentStore from "../../stores/usePaymentStore";
 import SearchingBg from "../../assets/ourteam.png";
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -317,6 +318,11 @@ function SearchPage() {
   const [driverInfo, setDriverInfo] = useState(null);
   const [assignedAt, setAssignedAt] = useState(null);
 
+  // Payment popup
+  const { initiatePayment, loading: payLoading, error: payError } = usePaymentStore();
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentSettled, setPaymentSettled] = useState(false);
+
   // Map
   const [mapCenter, setMapCenter] = useState([27.7172, 85.324]);
   const [mapZoom, setMapZoom] = useState(14);
@@ -337,15 +343,21 @@ function SearchPage() {
   }, [flow]);
 
   // Auto-cancel any in-flight pickup if the user navigates away (unmount).
+  // IMPORTANT: do NOT cancel once the customer has chosen a payment method —
+  // otherwise eSewa redirects (page navigates away → React unmount) would
+  // wipe the freshly created pickup and corrupt the customer's history.
   const flowRef = useRef(flow);
   const pickupIdRef = useRef(pickupId);
+  const paymentSettledRef = useRef(paymentSettled);
   useEffect(() => { flowRef.current = flow; }, [flow]);
   useEffect(() => { pickupIdRef.current = pickupId; }, [pickupId]);
+  useEffect(() => { paymentSettledRef.current = paymentSettled; }, [paymentSettled]);
   useEffect(() => {
     return () => {
       const f = flowRef.current;
       const id = pickupIdRef.current;
-      if (id && (f === "searching" || f === "found")) {
+      const settled = paymentSettledRef.current;
+      if (id && !settled && (f === "searching" || f === "found")) {
         cancelPickup(id);
       }
     };
@@ -374,6 +386,8 @@ function SearchPage() {
       setDriverInfo(data.driverInfo || null);
       setAssignedAt(data.assignedAt || null);
       setFlow("found");
+      // Driver matched — prompt the customer to choose how they want to pay.
+      if (!paymentSettled) setShowPaymentModal(true);
     };
     const onStatus = (data) => {
       if (pickupId && data.id?.toString() !== pickupId?.toString()) return;
@@ -424,6 +438,23 @@ function SearchPage() {
   const handleCancel = async () => {
     if (pickupId) await cancelPickup(pickupId);
     setFlow("confirm"); setPickupId(null); setDriverInfo(null); clearEstimate();
+  };
+
+  const handleChoosePayment = async (method) => {
+    if (!pickupId) return;
+    // Mark settled BEFORE the eSewa form submit fires — otherwise the page
+    // navigation can race the React unmount and trigger the auto-cancel.
+    setPaymentSettled(true);
+    paymentSettledRef.current = true;
+    const result = await initiatePayment({ pickupId, method });
+    if (result.success) {
+      setShowPaymentModal(false);
+      // For eSewa the browser is already redirecting away — nothing else to do.
+    } else {
+      // Roll back if initiation failed so the customer can retry / cancel.
+      setPaymentSettled(false);
+      paymentSettledRef.current = false;
+    }
   };
 
   const handleBackToHome = () => {
@@ -721,6 +752,67 @@ function SearchPage() {
           </div>
         )}
       </div>
+
+      {/* ── Payment Method Modal ── */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden">
+            <div className="p-6 border-b border-primary/10">
+              <h3 className="text-2xl font-bold text-primary">Choose Payment Method</h3>
+              <p className="text-sm text-primary/60 mt-1">
+                Driver matched! How would you like to pay?
+              </p>
+              {estimate?.estimatedPrice && (
+                <div className="mt-3 inline-flex items-center px-3 py-1.5 rounded-full bg-[#296200]/10 text-[#296200] font-bold text-sm">
+                  Total: NPR {estimate.estimatedPrice}
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 space-y-3">
+              <button
+                onClick={() => handleChoosePayment("cash")}
+                disabled={payLoading}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-primary/10 hover:border-[#296200] hover:bg-[#296200]/5 transition disabled:opacity-50 disabled:cursor-not-allowed text-left"
+              >
+                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center text-2xl">
+                  💵
+                </div>
+                <div className="flex-1">
+                  <div className="font-bold text-primary">Cash Payment</div>
+                  <div className="text-xs text-primary/60">Pay the driver in cash on pickup</div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleChoosePayment("esewa")}
+                disabled={payLoading}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-primary/10 hover:border-[#296200] hover:bg-[#296200]/5 transition disabled:opacity-50 disabled:cursor-not-allowed text-left"
+              >
+                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center font-bold text-green-700">
+                  eS
+                </div>
+                <div className="flex-1">
+                  <div className="font-bold text-primary">eSewa</div>
+                  <div className="text-xs text-primary/60">Pay online securely via eSewa</div>
+                </div>
+              </button>
+
+              {payError && (
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+                  {payError}
+                </div>
+              )}
+
+              {payLoading && (
+                <div className="text-center text-sm text-primary/60">
+                  Processing...
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

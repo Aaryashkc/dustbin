@@ -4,6 +4,7 @@ import { roleMiddleware } from "../middlewares/role.middleware.js";
 import {
   createPickup,
   estimatePickup,
+  getDriverRoute,
   getPickup,
   getPendingPickups,
   acceptPickup,
@@ -36,6 +37,9 @@ router.post("/", roleMiddleware("customer_admin"), createPickup);
 
 // ── Customer: fetch own pickups + dashboard stats ────────────────────────
 router.get("/my-pickups", roleMiddleware("customer_admin"), getMyPickups);
+
+// ── Driver: live ORS route from current location → destination ───────────
+router.post("/route", roleMiddleware("driver"), getDriverRoute);
 
 // ── Driver: fetch all pending requests (initial load) ────────────────────
 router.get("/pending", roleMiddleware("driver"), getPendingPickups);
