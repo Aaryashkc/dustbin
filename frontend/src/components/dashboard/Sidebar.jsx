@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import useAuthStore from "../../stores/useAuthStore";
+import { useDashboardTheme } from "../../hooks/useDashboardTheme";
 import {
   LayoutDashboard,
   Building2,
@@ -17,11 +18,15 @@ import {
   DollarSign,
   Receipt,
   X,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 const Sidebar = ({ mobileOpen, onClose }) => {
   const user = useAuthStore((s) => s.user);
   const isSuperAdmin = user?.role === "super_admin";
+  const { theme, toggleTheme } = useDashboardTheme();
+  const isDark = theme === "dark";
 
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/admin-dashboard" },
@@ -50,11 +55,10 @@ const Sidebar = ({ mobileOpen, onClose }) => {
     <div className="flex flex-col w-full h-full">
       {/* Brand */}
       <div className="h-16 flex items-center justify-between px-6 border-b border-primary/10">
-        <p className="text-lg font-bold text-primary tracking-tight">
-          Admin Panel
-        </p>
+        <p className="text-lg font-bold text-primary tracking-tight">Admin Panel</p>
         {/* Mobile close button */}
         <button
+          type="button"
           onClick={onClose}
           className="md:hidden p-1.5 rounded-lg hover:bg-primary/5 transition-colors"
           aria-label="Close menu"
@@ -88,13 +92,52 @@ const Sidebar = ({ mobileOpen, onClose }) => {
         </ul>
       </nav>
 
+      {/* Theme toggle */}
+      <div className="px-3 pb-2">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="flex w-full items-center justify-between gap-3 rounded-xl border border-primary/10 bg-primary/[0.04] px-3 py-2.5 text-left transition-colors hover:bg-primary/[0.07]"
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          aria-pressed={isDark}
+        >
+          <span className="flex items-center gap-2 min-w-0">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/8 text-primary">
+              {isDark ? (
+                <Moon className="h-4 w-4" aria-hidden />
+              ) : (
+                <Sun className="h-4 w-4" aria-hidden />
+              )}
+            </span>
+            <span className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold text-primary truncate">
+                {isDark ? "Dark mode" : "Light mode"}
+              </span>
+              <span className="text-xs text-primary/45 truncate">
+                {isDark ? "Easier on the eyes" : "Default dashboard look"}
+              </span>
+            </span>
+          </span>
+          <span
+            className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full p-0.5 transition-colors ${
+              isDark ? "bg-primary/35" : "bg-primary/15"
+            }`}
+            aria-hidden
+          >
+            <span
+              className={`inline-block h-6 w-6 rounded-full bg-[var(--dash-shell)] shadow-sm ring-1 ring-primary/10 transition-transform duration-200 ease-out ${
+                isDark ? "translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </span>
+        </button>
+      </div>
+
       {/* System Status */}
       <div className="p-4 border-t border-primary/10">
         <div className="flex items-center gap-2 px-2">
           <span className="w-2 h-2 rounded-full bg-green-500" />
-          <span className="text-xs font-medium text-primary/50">
-            System Online
-          </span>
+          <span className="text-xs font-medium text-primary/50">System Online</span>
         </div>
       </div>
     </div>
@@ -105,14 +148,15 @@ const Sidebar = ({ mobileOpen, onClose }) => {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden dark:bg-black/50"
           onClick={onClose}
+          aria-hidden
         />
       )}
 
       {/* Mobile sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 w-64 bg-[#faf8f3] border-r border-primary/10 z-50 transform transition-transform duration-200 md:hidden ${
+        className={`fixed inset-y-0 left-0 w-64 bg-[var(--dash-shell)] border-r border-primary/10 z-50 transform transition-transform duration-200 md:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -120,7 +164,7 @@ const Sidebar = ({ mobileOpen, onClose }) => {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex fixed inset-y-0 left-0 w-64 bg-[#faf8f3] border-r border-primary/10 z-30">
+      <aside className="hidden md:flex fixed inset-y-0 left-0 w-64 bg-[var(--dash-shell)] border-r border-primary/10 z-30">
         {navContent}
       </aside>
     </>

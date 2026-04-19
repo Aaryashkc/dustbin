@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (scoped via .dark on an ancestor — admin dashboard root) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Base */
 
 @theme {
@@ -9,6 +12,33 @@
   --color-dark-mode: #202128;
   --animate-truckMove: truckMove 2s ease-in-out infinite;
   --animate-modalIn: modalIn 200ms ease-out;
+}
+
+/*
+ * Admin dashboard shell — matches @theme palette (primary #354f52, accent #f5f1e8, dark-mode #202128).
+ * Child pages inherit a lighter --color-primary on dark surfaces so text-primary / borders stay readable.
+ */
+.admin-dashboard-root {
+  --dash-shell: #faf8f3;
+  --dash-page: #f5f3ed;
+  --dash-card: #ffffff;
+  --dash-overlay: rgb(0 0 0 / 0.3);
+}
+
+.admin-dashboard-root.dark {
+  color-scheme: dark;
+  --dash-shell: #1c1d24;
+  --dash-page: #12131a;
+  --dash-card: #22232c;
+  --dash-overlay: rgb(0 0 0 / 0.55);
+  /* Muted sage-tinted foreground for text-primary / border-primary / bg-primary/* on dark UI */
+  --color-primary: #c4cfcc;
+  --color-accent: #f5f1e8;
+}
+
+/* White cards/panels across admin routes — keeps tables and stats readable in dark mode */
+.admin-dashboard-root.dark .bg-white {
+  background-color: var(--dash-card);
 }
 
 @keyframes truckMove {
