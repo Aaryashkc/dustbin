@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useAuthStore from "../stores/useAuthStore";
+import { useDashboardTheme } from "../hooks/useDashboardTheme";
 
 import {
   Chart as ChartJS,
@@ -34,10 +35,19 @@ const fmt = (ms) => {
 const PickupStats = () => {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
+  const { theme } = useDashboardTheme();
   const isSuperAdmin = user?.role === "super_admin";
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("overview");
+  const isDark = theme === "dark";
+  const chartText = isDark ? "#dfe9e6" : "#354f52";
+  const chartGrid = isDark ? "rgba(231,239,236,0.14)" : "rgba(0,0,0,0.05)";
+
+  useEffect(() => {
+    ChartJS.defaults.color = chartText;
+    ChartJS.defaults.borderColor = chartGrid;
+  }, [chartText, chartGrid]);
 
   useEffect(() => {
     (async () => {
@@ -179,7 +189,7 @@ const PickupStats = () => {
                   options={{
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } } },
+                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: chartGrid } } },
                   }}
                 />
               </div>
@@ -209,7 +219,7 @@ const PickupStats = () => {
                     plugins: { legend: { display: false } },
                     scales: {
                       x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } },
-                      y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } },
+                      y: { beginAtZero: true, grid: { color: chartGrid } },
                     },
                   }}
                 />
@@ -264,7 +274,7 @@ const PickupStats = () => {
                   options={{
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { position: "bottom", labels: { usePointStyle: true, padding: 16 } } },
-                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } } },
+                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: chartGrid } } },
                   }}
                 />
               </div>
@@ -299,7 +309,7 @@ const PickupStats = () => {
                       },
                       scales: {
                         x: { grid: { display: false } },
-                        y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" }, ticks: { callback: (v) => `${v}s` } },
+                        y: { beginAtZero: true, grid: { color: chartGrid }, ticks: { callback: (v) => `${v}s` } },
                       },
                     }}
                   />
@@ -331,7 +341,7 @@ const PickupStats = () => {
                       },
                       scales: {
                         x: { grid: { display: false } },
-                        y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" }, ticks: { callback: (v) => `${v}m` } },
+                        y: { beginAtZero: true, grid: { color: chartGrid }, ticks: { callback: (v) => `${v}m` } },
                       },
                     }}
                   />
@@ -358,7 +368,7 @@ const PickupStats = () => {
                   options={{
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } } },
+                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: chartGrid } } },
                   }}
                 />
               </div>
@@ -518,7 +528,7 @@ const PickupStats = () => {
                   options={{
                     responsive: true, maintainAspectRatio: false, indexAxis: "y",
                     plugins: { legend: { display: false } },
-                    scales: { x: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } }, y: { grid: { display: false } } },
+                    scales: { x: { beginAtZero: true, grid: { color: chartGrid } }, y: { grid: { display: false } } },
                   }}
                 />
               </div>
@@ -626,7 +636,7 @@ const PickupStats = () => {
                       plugins: { legend: { position: "bottom", labels: { usePointStyle: true, padding: 12 } } },
                       scales: {
                         x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } },
-                        y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } },
+                        y: { beginAtZero: true, grid: { color: chartGrid } },
                       },
                     }}
                   />
@@ -713,7 +723,7 @@ const PickupStats = () => {
                       plugins: { legend: { position: "bottom", labels: { usePointStyle: true, padding: 12 } } },
                       scales: {
                         x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } },
-                        y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } },
+                        y: { beginAtZero: true, grid: { color: chartGrid } },
                       },
                     }}
                   />

@@ -13,6 +13,7 @@ import {
   Filler,
 } from "chart.js";
 import { Bar, Line, Doughnut } from "react-chartjs-2";
+import { useDashboardTheme } from "../../hooks/useDashboardTheme";
 
 ChartJS.register(
   CategoryScale,
@@ -151,6 +152,12 @@ function shortDate(iso) {
  *   - orgBreakdown OR areaBreakdown
  */
 function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
+  const { theme } = useDashboardTheme();
+  const isDark = theme === "dark";
+  const chartText = isDark ? "#dfe9e6" : "#2d3748";
+  const chartMuted = isDark ? "#b6c3bf" : "#4a5568";
+  const chartGrid = isDark ? "rgba(231,239,236,0.12)" : "#e2e8f0";
+
   const {
     statusDistribution = [],
     categoryDistribution = [],
@@ -161,10 +168,16 @@ function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
     orgBreakdown = [],
     areaBreakdown = [],
     ecosystemStats = {},
+    scheduleAnalytics = {},
   } = analyticsData || {};
 
   const isSuperAdmin = mode === "super_admin";
   const breakdown = isSuperAdmin ? orgBreakdown : areaBreakdown;
+  const scheduleSummary = scheduleAnalytics.summary || {};
+  const scheduleTrend = scheduleAnalytics.dailyTrend || [];
+  const scheduledAreas = scheduleAnalytics.areaBreakdown || [];
+  const scheduledDrivers = scheduleAnalytics.topDrivers || [];
+  const hasScheduleData = (scheduleSummary.totalAssignments || 0) > 0 || scheduleTrend.length > 0;
 
   /* ── Daily trend (line) ── */
   const trendData = useMemo(() => ({
@@ -281,8 +294,105 @@ function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
 
   const horizontalBarOptions = {
     ...cartesianOptions,
+    plugins: {
+      ...cartesianOptions.plugins,
+      legend: {
+        ...cartesianOptions.plugins.legend,
+        labels: {
+          ...cartesianOptions.plugins.legend.labels,
+          color: chartText,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ...cartesianOptions.scales.x,
+        ticks: { ...cartesianOptions.scales.x.ticks, color: chartMuted },
+      },
+      y: {
+        ...cartesianOptions.scales.y,
+        grid: { ...cartesianOptions.scales.y.grid, color: chartGrid },
+        ticks: { ...cartesianOptions.scales.y.ticks, color: chartMuted },
+      },
+    },
     indexAxis: "y",
   };
+
+  const themedCartesianOptions = {
+    ...cartesianOptions,
+    plugins: {
+      ...cartesianOptions.plugins,
+      legend: {
+        ...cartesianOptions.plugins.legend,
+        labels: {
+          ...cartesianOptions.plugins.legend.labels,
+          color: chartText,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ...cartesianOptions.scales.x,
+        ticks: { ...cartesianOptions.scales.x.ticks, color: chartMuted },
+      },
+      y: {
+        ...cartesianOptions.scales.y,
+        grid: { ...cartesianOptions.scales.y.grid, color: chartGrid },
+        ticks: { ...cartesianOptions.scales.y.ticks, color: chartMuted },
+      },
+    },
+  };
+
+  const themedDoughnutOptions = {
+    ...doughnutOptions,
+    plugins: {
+      ...doughnutOptions.plugins,
+      legend: {
+        ...doughnutOptions.plugins.legend,
+        labels: {
+          ...doughnutOptions.plugins.legend.labels,
+          color: chartText,
+        },
+      },
+    },
+  };
+
+  /* Scheduled collection trend from MLSchedule assignments */
+  const scheduleTrendData = useMemo(() => ({
+    labels: scheduleTrend.map((d) => shortDate(d.date)),
+    datasets: [
+      {
+        label: "Assigned",
+        data: scheduleTrend.map((d) => d.assigned || 0),
+        backgroundColor: "#3b82f6",
+        borderRadius: 6,
+      },
+      {
+        label: "Completed",
+        data: scheduleTrend.map((d) => d.completed || 0),
+        backgroundColor: "#22c55e",
+        borderRadius: 6,
+      },
+    ],
+  }), [scheduleTrend]);
+
+  const scheduledAreaData = useMemo(() => ({
+    labels: scheduledAreas.map((a) => a.name || "Unknown"),
+    datasets: [
+      {
+        label: "Assigned",
+        data: scheduledAreas.map((a) => a.assigned || 0),
+        backgroundColor: "#3b82f6",
+        borderRadius: 6,
+      },
+      {
+        label: "Completed",
+        data: scheduledAreas.map((a) => a.completed || 0),
+        backgroundColor: "#22c55e",
+        borderRadius: 6,
+      },
+    ],
+  }), [scheduledAreas]);
 
   /* ── Render ── */
   return (
@@ -315,6 +425,93 @@ function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
         </div>
       </div>
 
+      {/* Scheduled collection work from ML schedule assignments */}
+      {hasScheduleData && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-2xl border border-primary/10 p-4">
+              <p className="text-xs font-semibold text-primary/40 uppercase tracking-wider">Scheduled Jobs</p>
+              <p className="text-2xl font-bold text-primary mt-1">
+                {(scheduleSummary.totalAssignments || 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl border border-primary/10 p-4">
+              <p className="text-xs font-semibold text-primary/40 uppercase tracking-wider">Schedule Done</p>
+              <p className="text-2xl font-bold text-emerald-600 mt-1">
+                {(scheduleSummary.completedAssignments || 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl border border-primary/10 p-4">
+              <p className="text-xs font-semibold text-primary/40 uppercase tracking-wider">Schedule Rate</p>
+              <p className="text-2xl font-bold text-blue-600 mt-1">
+                {scheduleSummary.completionRate || 0}%
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl border border-primary/10 p-4">
+              <p className="text-xs font-semibold text-primary/40 uppercase tracking-wider">Predicted Waste</p>
+              <p className="text-2xl font-bold text-violet-600 mt-1">
+                {(scheduleSummary.predictedWasteKg || 0).toLocaleString()} kg
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ChartCard
+              title="Scheduled Collection Trend"
+              subtitle="Assigned vs completed ML schedule work"
+            >
+              <div className="h-72">
+                {scheduleTrend.length > 0 ? (
+                  <Bar data={scheduleTrendData} options={themedCartesianOptions} />
+                ) : (
+                  <EmptyState message="No scheduled work in the last 30 days" />
+                )}
+              </div>
+            </ChartCard>
+
+            <ChartCard
+              title="Scheduled Areas"
+              subtitle="Where assigned schedule work is getting completed"
+            >
+              <div className="h-72">
+                {scheduledAreas.length > 0 ? (
+                  <Bar data={scheduledAreaData} options={horizontalBarOptions} />
+                ) : (
+                  <EmptyState message="No scheduled area completions yet" />
+                )}
+              </div>
+            </ChartCard>
+          </div>
+
+          {scheduledDrivers.length > 0 && topDrivers.length === 0 && (
+            <ChartCard title="Schedule Driver Completions" subtitle="By completed scheduled areas">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs font-semibold text-primary/40 uppercase tracking-wider border-b border-primary/10">
+                      <th className="pb-3 pr-4">#</th>
+                      <th className="pb-3 pr-4">Driver</th>
+                      <th className="pb-3 pr-4 text-right">Assigned</th>
+                      <th className="pb-3 text-right">Completed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {scheduledDrivers.map((d, i) => (
+                      <tr key={d.driverId || d.name || i} className="border-b border-primary/5 last:border-0">
+                        <td className="py-3 pr-4 text-primary/40 font-medium">{i + 1}</td>
+                        <td className="py-3 pr-4 font-semibold text-primary">{d.name}</td>
+                        <td className="py-3 pr-4 text-right text-primary/70">{d.assigned || 0}</td>
+                        <td className="py-3 text-right font-semibold text-primary">{d.completed || 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </ChartCard>
+          )}
+        </div>
+      )}
+
       {/* Daily trend (full width) */}
       <ChartCard
         title="Daily Pickup Trend"
@@ -322,7 +519,7 @@ function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
       >
         <div className="h-72 w-full">
           {dailyTrend.length > 0 ? (
-            <Line data={trendData} options={cartesianOptions} />
+            <Line data={trendData} options={themedCartesianOptions} />
           ) : (
             <EmptyState message="No pickup activity in the last 30 days" />
           )}
@@ -334,7 +531,7 @@ function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
         <ChartCard title="Status Breakdown" subtitle="Where pickups currently are">
           <div className="h-60">
             {statusDistribution.length > 0 ? (
-              <Doughnut data={statusData} options={doughnutOptions} />
+              <Doughnut data={statusData} options={themedDoughnutOptions} />
             ) : (
               <EmptyState message="No pickups yet" />
             )}
@@ -344,7 +541,7 @@ function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
         <ChartCard title="By Category" subtitle="Recyclable vs non-recyclable">
           <div className="h-60">
             {categoryDistribution.length > 0 ? (
-              <Doughnut data={categoryData} options={doughnutOptions} />
+              <Doughnut data={categoryData} options={themedDoughnutOptions} />
             ) : (
               <EmptyState message="No category data" />
             )}
@@ -354,7 +551,7 @@ function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
         <ChartCard title="By Difficulty" subtitle="Easy / medium / hard">
           <div className="h-60">
             {levelDistribution.length > 0 ? (
-              <Doughnut data={levelData} options={doughnutOptions} />
+              <Doughnut data={levelData} options={themedDoughnutOptions} />
             ) : (
               <EmptyState message="No difficulty data" />
             )}
@@ -370,7 +567,7 @@ function AnalyticsCharts({ analyticsData, mode = "super_admin" }) {
         >
           <div className="h-72">
             {hourlyDistribution.length > 0 ? (
-              <Bar data={hourlyData} options={cartesianOptions} />
+              <Bar data={hourlyData} options={themedCartesianOptions} />
             ) : (
               <EmptyState message="No hourly data" />
             )}

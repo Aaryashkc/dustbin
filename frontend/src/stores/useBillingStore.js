@@ -125,10 +125,10 @@ const useBillingStore = create((set, get) => ({
   },
 
   // ── Super admin: generate bills ──
-  generateBills: async () => {
+  generateBills: async (params = {}) => {
     try {
       const res = await api.post("/billing/admin/generate");
-      get().fetchBillingOverview();
+      get().fetchBillingOverview(params);
       return { success: true, ...res.data };
     } catch (err) {
       return {

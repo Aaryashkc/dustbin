@@ -1,4 +1,5 @@
 import PickupRequest from "../models/PickupRequest.model.js";
+import MLSchedule from "../models/MLSchedule.model.js";
 
 /**
  * Build a unified analytics payload from PickupRequest aggregations.
@@ -160,5 +161,182 @@ export async function buildPickupAnalytics(match) {
     })),
     hourlyDistribution: hourlyAgg.map((h) => ({ hour: h._id, count: h.count })),
     topDrivers: topDriversAgg,
+  };
+}
+
+function formatDateKey(date) {
+  return new Date(date).toISOString().split("T")[0];
+}
+
+function emptyScheduleAnalytics() {
+  return {
+    summary: {
+      totalSchedules: 0,
+      confirmedSchedules: 0,
+      completedSchedules: 0,
+      totalAssignments: 0,
+      completedAssignments: 0,
+      pendingAssignments: 0,
+      failedAssignments: 0,
+      completionRate: 0,
+      predictedWasteKg: 0,
+    },
+    statusDistribution: [],
+    dailyTrend: [],
+    areaBreakdown: [],
+    topDrivers: [],
+  };
+}
+
+/**
+ * Build dashboard analytics from ML scheduled collection assignments.
+ * These are separate from customer pickup requests: a driver completing an
+ * ML-scheduled area updates MLSchedule.areas[].assignedTrucks[], not
+ * PickupRequest, so dashboard charts need this source too.
+ */
+export async function buildScheduleAnalytics({ orgId } = {}) {
+  const orgIdString = orgId?.toString();
+  const filter = {
+    status: { $in: ["confirmed", "completed"] },
+    ...(orgIdString ? { "areas.assignedTrucks.orgId": orgIdString } : {}),
+  };
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const [allSchedules, recentSchedules] = await Promise.all([
+    MLSchedule.find(filter).sort({ date: -1 }).lean(),
+    MLSchedule.find({ ...filter, date: { $gte: thirtyDaysAgo } }).sort({ date: 1 }).lean(),
+  ]);
+
+  if (allSchedules.length === 0) return emptyScheduleAnalytics();
+
+  const includeTruck = (truck) => !orgIdString || truck.orgId?.toString() === orgIdString;
+
+  const summary = {
+    totalSchedules: 0,
+    confirmedSchedules: 0,
+    completedSchedules: 0,
+    totalAssignments: 0,
+    completedAssignments: 0,
+    pendingAssignments: 0,
+    failedAssignments: 0,
+    predictedWasteKg: 0,
+  };
+  const statusCounts = {};
+  const areaMap = new Map();
+  const driverMap = new Map();
+  const scheduleIdsWithAssignments = new Set();
+
+  const accumulateSchedule = (
+    schedule,
+    { includeDaily = false, dailyMap = null, countSummary = true } = {}
+  ) => {
+    let hasScopedAssignment = false;
+    const date = formatDateKey(schedule.date);
+    const daily = includeDaily
+      ? dailyMap.get(date) || { date, assigned: 0, completed: 0, predictedWasteKg: 0 }
+      : null;
+
+    for (const area of schedule.areas || []) {
+      const scopedTrucks = (area.assignedTrucks || []).filter(includeTruck);
+      if (scopedTrucks.length === 0) continue;
+
+      hasScopedAssignment = true;
+      const areaName = area.area || "Unknown";
+      const predictedWasteKg = Number(area.predictedWasteKg || 0);
+      const completedForArea = scopedTrucks.filter((truck) => truck.completionStatus === "completed").length;
+      const failedForArea = scopedTrucks.filter((truck) => truck.completionStatus === "failed").length;
+      const pendingForArea = scopedTrucks.length - completedForArea - failedForArea;
+
+      if (countSummary) {
+        summary.totalAssignments += scopedTrucks.length;
+        summary.completedAssignments += completedForArea;
+        summary.failedAssignments += failedForArea;
+        summary.pendingAssignments += pendingForArea;
+        summary.predictedWasteKg += predictedWasteKg;
+
+        const areaStats = areaMap.get(areaName) || {
+          name: areaName,
+          assigned: 0,
+          completed: 0,
+          predictedWasteKg: 0,
+        };
+        areaStats.assigned += scopedTrucks.length;
+        areaStats.completed += completedForArea;
+        areaStats.predictedWasteKg += predictedWasteKg;
+        areaMap.set(areaName, areaStats);
+      }
+
+      if (daily) {
+        daily.assigned += scopedTrucks.length;
+        daily.completed += completedForArea;
+        daily.predictedWasteKg += predictedWasteKg;
+      }
+
+      if (countSummary) {
+        for (const truck of scopedTrucks) {
+          const driverKey = truck.driverId || truck.driverName || "unknown";
+          const driverStats = driverMap.get(driverKey) || {
+            driverId: truck.driverId || null,
+            name: truck.driverName || "Unknown driver",
+            completed: 0,
+            assigned: 0,
+            predictedWasteKg: 0,
+          };
+          driverStats.assigned += 1;
+          driverStats.predictedWasteKg += predictedWasteKg;
+          if (truck.completionStatus === "completed") driverStats.completed += 1;
+          driverMap.set(driverKey, driverStats);
+        }
+      }
+    }
+
+    if (hasScopedAssignment) {
+      if (countSummary) scheduleIdsWithAssignments.add(schedule._id.toString());
+      if (includeDaily && daily) dailyMap.set(date, daily);
+    }
+  };
+
+  for (const schedule of allSchedules) {
+    accumulateSchedule(schedule);
+  }
+
+  for (const schedule of allSchedules) {
+    if (!scheduleIdsWithAssignments.has(schedule._id.toString())) continue;
+    statusCounts[schedule.status] = (statusCounts[schedule.status] || 0) + 1;
+  }
+
+  summary.totalSchedules = scheduleIdsWithAssignments.size;
+  summary.confirmedSchedules = statusCounts.confirmed || 0;
+  summary.completedSchedules = statusCounts.completed || 0;
+
+  const dailyMap = new Map();
+  for (const schedule of recentSchedules) {
+    accumulateSchedule(schedule, { includeDaily: true, dailyMap, countSummary: false });
+  }
+
+  const completionRate = summary.totalAssignments > 0
+    ? Math.round((summary.completedAssignments / summary.totalAssignments) * 100)
+    : 0;
+
+  return {
+    summary: {
+      ...summary,
+      predictedWasteKg: Math.round(summary.predictedWasteKg),
+      completionRate,
+    },
+    statusDistribution: Object.entries(statusCounts).map(([status, count]) => ({ status, count })),
+    dailyTrend: Array.from(dailyMap.values())
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .map((d) => ({ ...d, predictedWasteKg: Math.round(d.predictedWasteKg) })),
+    areaBreakdown: Array.from(areaMap.values())
+      .sort((a, b) => b.completed - a.completed || b.assigned - a.assigned)
+      .slice(0, 15)
+      .map((area) => ({ ...area, predictedWasteKg: Math.round(area.predictedWasteKg) })),
+    topDrivers: Array.from(driverMap.values())
+      .sort((a, b) => b.completed - a.completed || b.assigned - a.assigned)
+      .slice(0, 10)
+      .map((driver) => ({ ...driver, predictedWasteKg: Math.round(driver.predictedWasteKg) })),
   };
 }

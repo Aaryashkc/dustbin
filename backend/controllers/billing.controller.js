@@ -13,10 +13,6 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 // ── Defaults (used when no BillingConfig exists in DB) ───────────────────────
 const DEFAULT_CUSTOMER_FEE = 500;
-
-// Throttle auto-generation: only run once per 5 minutes
-let lastAutoGenTime = 0;
-const AUTO_GEN_INTERVAL = 5 * 60 * 1000;
 const DEFAULT_ADMIN_FEE = 1000;
 
 function periodLabel(month, year) {
@@ -74,44 +70,12 @@ async function getFeesForOrg(orgId) {
 
 /**
  * GET /api/billing/my-bills
- * Auto-generates current month's bill for the user if it doesn't exist yet.
+ * Reads the user's persisted monthly bills.
+ * Bill creation is handled by the monthly cron or explicit admin generation.
  */
 export const getMyBills = async (req, res) => {
   try {
     const now = new Date();
-    const billingMonth = now.getMonth() + 1;
-    const billingYear = now.getFullYear();
-
-    // Auto-generate current month's bill if not yet created
-    const existingCurrent = await Billing.findOne({
-      customerId: req.user._id,
-      billingMonth,
-      billingYear,
-    });
-
-    if (!existingCurrent) {
-      const userOrgId = await resolveUserOrgId(req.user);
-      const fees = await getFeesForOrg(userOrgId);
-      const isAdmin = req.user.role === "admin";
-      const fee = isAdmin ? fees.adminFee : fees.customerFee;
-      const dueDate = new Date(billingYear, billingMonth - 1, 15);
-
-      try {
-        await Billing.create({
-          customerId: req.user._id,
-          orgId: userOrgId,
-          billedRole: req.user.role,
-          billingMonth,
-          billingYear,
-          amount: fee,
-          dueDate,
-          status: dueDate < now ? "OVERDUE" : "UNPAID",
-        });
-      } catch (dupErr) {
-        // Ignore duplicate key error (race condition)
-        if (dupErr.code !== 11000) throw dupErr;
-      }
-    }
 
     const bills = await Billing.find({ customerId: req.user._id })
       .sort({ billingYear: -1, billingMonth: -1 })
@@ -337,17 +301,6 @@ export const getPaymentHistory = async (req, res) => {
  */
 export const getBillingOverview = async (req, res) => {
   try {
-    // Auto-generate any missing bills before showing the overview (throttled)
-    const now = Date.now();
-    if (now - lastAutoGenTime > AUTO_GEN_INTERVAL) {
-      lastAutoGenTime = now;
-      try {
-        await runBillGeneration();
-      } catch (genErr) {
-        console.error("Auto bill generation in overview failed:", genErr.message);
-      }
-    }
-
     const { status, month, year, billedRole, page = 1, limit = 50 } = req.query;
     const isSuperAdmin = req.user.role === "super_admin";
 
@@ -515,7 +468,13 @@ export const waiveBill = async (req, res) => {
  */
 export const generateMonthlyBills = async (req, res) => {
   try {
-    const result = await runBillGeneration();
+    if (req.user.role === "admin" && !req.user.orgId) {
+      return res.status(403).json({ message: "No organization assigned to your account" });
+    }
+
+    const result = await runBillGeneration({
+      orgId: req.user.role === "admin" ? req.user.orgId : null,
+    });
     res.json(result);
   } catch (err) {
     console.error("generateMonthlyBills error:", err);
@@ -635,7 +594,7 @@ export const updateBillingConfig = async (req, res) => {
  * - Updates orgId on existing bills if user's org changed
  * - Updates amount on UNPAID bills if fee config changed
  */
-export const runBillGeneration = async () => {
+export const runBillGeneration = async ({ orgId = null } = {}) => {
   const now = new Date();
   const billingMonth = now.getMonth() + 1;
   const billingYear = now.getFullYear();
@@ -643,21 +602,29 @@ export const runBillGeneration = async () => {
 
   // Fetch all active billable users: customers + admins
   // Use $ne: false instead of true to include users where isActive is undefined/missing
-  const billableUsers = await User.find({
+  const userFilter = {
     role: { $in: ["customer_admin", "admin"] },
     isActive: { $ne: false },
-  })
+  };
+
+  const billableUsers = await User.find(userFilter)
     .select("_id name email role orgId address location")
     .lean();
 
-  console.log(`[Billing] Found ${billableUsers.length} billable users (customer_admin + admin) for ${billingMonth}/${billingYear}`);
+  console.log(`[Billing] Found ${billableUsers.length} billable users (customer_admin + admin) for ${billingMonth}/${billingYear}${orgId ? ` in org ${orgId}` : ""}`);
 
   let created = 0;
   let skipped = 0;
   let updated = 0;
+  let outOfScope = 0;
 
   for (const user of billableUsers) {
     const userOrgId = await resolveUserOrgId(user);
+    if (orgId && String(userOrgId || "") !== String(orgId)) {
+      outOfScope++;
+      continue;
+    }
+
     const fees = await getFeesForOrg(userOrgId);
     const isAdmin = user.role === "admin";
     const fee = isAdmin ? fees.adminFee : fees.customerFee;
@@ -721,10 +688,11 @@ export const runBillGeneration = async () => {
   );
 
   return {
-    message: `Bill generation complete: ${created} created, ${skipped} already existed, ${updated} updated`,
+    message: `Bill generation complete: ${created} created, ${skipped} already existed, ${updated} updated${orgId ? `, ${outOfScope} outside org skipped` : ""}`,
     created,
     skipped,
     updated,
+    outOfScope,
     period: periodLabel(billingMonth, billingYear),
   };
 };

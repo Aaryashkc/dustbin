@@ -5,7 +5,7 @@ import Task from "../models/Task.model.js";
 import Organization from "../models/Organization.model.js";
 import DeletionRequest from "../models/DeletionRequest.model.js";
 import PickupRequest from "../models/PickupRequest.model.js";
-import { buildPickupAnalytics } from "../services/pickupAnalytics.js";
+import { buildPickupAnalytics, buildScheduleAnalytics } from "../services/pickupAnalytics.js";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
@@ -515,10 +515,11 @@ export const getAdminAnalytics = async (req, res) => {
     const orgIdObj = new mongoose.Types.ObjectId(orgId);
     const match = { orgId: orgIdObj };
 
-    const [totalDrivers, activeVehicles, pickupAnalytics, areaBreakdown] = await Promise.all([
+    const [totalDrivers, activeVehicles, pickupAnalytics, scheduleAnalytics, areaBreakdown] = await Promise.all([
       User.countDocuments({ orgId, role: "driver" }),
       Truck.countDocuments({ orgId, isAvailable: true }),
       buildPickupAnalytics(match),
+      buildScheduleAnalytics({ orgId }),
       // Per-area pickup breakdown — replaces the old Task-based driver chart
       PickupRequest.aggregate([
         { $match: { ...match, area: { $ne: null } } },
@@ -571,6 +572,7 @@ export const getAdminAnalytics = async (req, res) => {
         dailyTrend: pickupAnalytics.dailyTrend,
         hourlyDistribution: pickupAnalytics.hourlyDistribution,
         topDrivers: pickupAnalytics.topDrivers,
+        scheduleAnalytics,
         // Per-area breakdown (admin view)
         areaBreakdown,
       },

@@ -162,11 +162,7 @@ server.listen(PORT, () => {
         .catch((e) => console.error("Billing generation error:", e));
     });
 
-    // Generate bills on startup (if not already generated for this month)
-    setTimeout(() => {
-      runBillGeneration()
-        .then((r) => console.log(`Billing startup: ${r.message}`))
-        .catch((e) => console.error("Billing startup error:", e));
-    }, 7000);
+    // Bills are created by the monthly cron above or explicit admin action.
+    // Avoid startup generation so restarts do not look like daily bill runs.
   }
 });

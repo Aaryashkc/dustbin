@@ -13,6 +13,8 @@ import useAnalyticsStore from "../stores/useAnalyticsStore";
 import useAuthStore from "../stores/useAuthStore";
 import useMLScheduleStore from "../stores/useMLScheduleStore";
 import AdminAnalyticsCharts from "../components/dashboard/AdminAnalyticsCharts";
+import { getSocket } from "../utils/socket";
+import { useDashboardTheme } from "../hooks/useDashboardTheme";
 import {
   Building2,
   Trash2,
@@ -31,13 +33,40 @@ const Dashboard = () => {
   const { data, isLoading, error, fetchAnalytics } = useAnalyticsStore();
   const { user } = useAuthStore();
   const { schedules, fetchSchedules, loading: mlLoading } = useMLScheduleStore();
+  const { theme } = useDashboardTheme();
   const role = user?.role;
   const isSuperAdmin = role === "super_admin";
+  const isDark = theme === "dark";
 
   useEffect(() => {
+    if (!user) return;
     fetchAnalytics();
     fetchSchedules();
-  }, [fetchAnalytics, fetchSchedules]);
+  }, [user, fetchAnalytics, fetchSchedules]);
+
+  useEffect(() => {
+    if (!user) return undefined;
+
+    const socket = getSocket();
+    const refreshDashboardData = () => {
+      fetchAnalytics();
+      fetchSchedules();
+    };
+    const events = [
+      "pickup:created",
+      "pickup:accepted",
+      "pickup:statusUpdate",
+      "pickup:cancelled",
+      "schedule:area-completed",
+      "schedule:updated",
+      "schedule:confirmed",
+    ];
+
+    events.forEach((event) => socket.on(event, refreshDashboardData));
+    return () => {
+      events.forEach((event) => socket.off(event, refreshDashboardData));
+    };
+  }, [user, fetchAnalytics, fetchSchedules]);
 
   const todayStr = new Date().toISOString().split("T")[0];
   const todaySchedule = useMemo(() => {
@@ -89,7 +118,7 @@ const Dashboard = () => {
         grid: { display: false },
         ticks: {
           font: { family: "'Poppins', sans-serif", size: 11 },
-          color: "#354f52",
+          color: isDark ? "#b6c3bf" : "#354f52",
         },
         beginAtZero: true,
       },
@@ -97,7 +126,7 @@ const Dashboard = () => {
         grid: { display: false },
         ticks: {
           font: { family: "'Poppins', sans-serif", size: 11 },
-          color: "#354f52",
+          color: isDark ? "#b6c3bf" : "#354f52",
         },
       },
     },

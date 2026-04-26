@@ -4,7 +4,7 @@ import Task from "../models/Task.model.js";
 import Truck from "../models/Truck.model.js";
 import Driver from "../models/Driver.model.js";
 import PickupRequest from "../models/PickupRequest.model.js";
-import { buildPickupAnalytics } from "../services/pickupAnalytics.js";
+import { buildPickupAnalytics, buildScheduleAnalytics } from "../services/pickupAnalytics.js";
 import DeletionRequest from "../models/DeletionRequest.model.js";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
@@ -229,10 +229,11 @@ export const addAdminToOrg = async (req, res) => {
 export const getSuperAdminAnalytics = async (req, res) => {
   try {
     // Real ecosystem-wide counts (not pickup-derived)
-    const [totalOrganizations, activeVehicles, pickupAnalytics, orgBreakdown] = await Promise.all([
+    const [totalOrganizations, activeVehicles, pickupAnalytics, scheduleAnalytics, orgBreakdown] = await Promise.all([
       Organization.countDocuments(),
       Truck.countDocuments({ isAvailable: true }),
       buildPickupAnalytics({}),
+      buildScheduleAnalytics(),
       // Per-organization pickup breakdown — replaces the old Task-based bar chart
       PickupRequest.aggregate([
         { $match: { orgId: { $ne: null } } },
@@ -294,6 +295,7 @@ export const getSuperAdminAnalytics = async (req, res) => {
         dailyTrend: pickupAnalytics.dailyTrend,
         hourlyDistribution: pickupAnalytics.hourlyDistribution,
         topDrivers: pickupAnalytics.topDrivers,
+        scheduleAnalytics,
         // Cross-org breakdown (super-admin only)
         orgBreakdown,
       },

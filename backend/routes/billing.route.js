@@ -61,11 +61,11 @@ router.put(
   waiveBill
 );
 
-// Only super admin can generate bills for all customers
+// Generate current monthly bills. Super admin generates globally; admin is scoped to their org.
 router.post(
   "/admin/generate",
   authMiddleware,
-  roleMiddleware("super_admin"),
+  roleMiddleware("super_admin", "admin"),
   generateMonthlyBills
 );
 

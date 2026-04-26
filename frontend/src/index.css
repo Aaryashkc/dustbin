@@ -22,23 +22,236 @@
   --dash-shell: #faf8f3;
   --dash-page: #f5f3ed;
   --dash-card: #ffffff;
+  --dash-card-soft: #f7f5ef;
+  --dash-border: rgb(53 79 82 / 0.12);
+  --dash-muted: rgb(53 79 82 / 0.58);
   --dash-overlay: rgb(0 0 0 / 0.3);
 }
 
 .admin-dashboard-root.dark {
   color-scheme: dark;
-  --dash-shell: #1c1d24;
-  --dash-page: #12131a;
-  --dash-card: #22232c;
+  --dash-shell: #1b1d24;
+  --dash-page: #11131a;
+  --dash-card: #20232c;
+  --dash-card-soft: #272b34;
+  --dash-border: rgb(231 239 236 / 0.13);
+  --dash-muted: rgb(231 239 236 / 0.66);
   --dash-overlay: rgb(0 0 0 / 0.55);
   /* Muted sage-tinted foreground for text-primary / border-primary / bg-primary/* on dark UI */
-  --color-primary: #c4cfcc;
+  --color-primary: #e7efec;
   --color-accent: #f5f1e8;
 }
 
 /* White cards/panels across admin routes — keeps tables and stats readable in dark mode */
 .admin-dashboard-root.dark .bg-white {
   background-color: var(--dash-card);
+}
+
+.admin-dashboard-root.dark .bg-primary {
+  background-color: #3f6468;
+}
+
+/* Dark-mode repair layer for older dashboard pages that hard-code light panels. */
+.admin-dashboard-root.dark [class~="bg-white/80"],
+.admin-dashboard-root.dark [class~="bg-white/60"],
+.admin-dashboard-root.dark [class~="bg-white/50"] {
+  background-color: color-mix(in srgb, var(--dash-card) 84%, transparent);
+}
+
+.admin-dashboard-root.dark .bg-gray-50,
+.admin-dashboard-root.dark .bg-gray-100,
+.admin-dashboard-root.dark [class~="bg-gray-50/50"],
+.admin-dashboard-root.dark [class*="bg-[#f7f5ef]"],
+.admin-dashboard-root.dark [class*="bg-[#f5f3ee]"],
+.admin-dashboard-root.dark [class*="bg-[#f5f1e8]"] {
+  background-color: var(--dash-card-soft);
+}
+
+.admin-dashboard-root.dark [class*="bg-[linear-gradient"] {
+  background: linear-gradient(120deg, #222b29, #262630);
+}
+
+.admin-dashboard-root.dark .hover\:bg-gray-50:hover,
+.admin-dashboard-root.dark .hover\:bg-gray-50\/50:hover,
+.admin-dashboard-root.dark .hover\:bg-white:hover {
+  background-color: #2b303a;
+}
+
+.admin-dashboard-root.dark .border-gray-100,
+.admin-dashboard-root.dark .border-gray-200,
+.admin-dashboard-root.dark .border-gray-300 {
+  border-color: var(--dash-border);
+}
+
+.admin-dashboard-root.dark .text-gray-400,
+.admin-dashboard-root.dark .text-gray-500,
+.admin-dashboard-root.dark .text-gray-600,
+.admin-dashboard-root.dark .text-gray-700 {
+  color: var(--dash-muted);
+}
+
+.admin-dashboard-root.dark .bg-emerald-50,
+.admin-dashboard-root.dark .bg-emerald-100,
+.admin-dashboard-root.dark [class~="bg-emerald-50/40"],
+.admin-dashboard-root.dark [class~="bg-emerald-50/50"],
+.admin-dashboard-root.dark [class~="bg-emerald-50/60"] {
+  background-color: rgb(6 78 59 / 0.28);
+}
+
+.admin-dashboard-root.dark .bg-green-50,
+.admin-dashboard-root.dark .bg-green-100 {
+  background-color: rgb(20 83 45 / 0.28);
+}
+
+.admin-dashboard-root.dark .bg-blue-50,
+.admin-dashboard-root.dark .bg-blue-100 {
+  background-color: rgb(30 64 175 / 0.28);
+}
+
+.admin-dashboard-root.dark .bg-indigo-50,
+.admin-dashboard-root.dark .bg-indigo-100 {
+  background-color: rgb(67 56 202 / 0.26);
+}
+
+.admin-dashboard-root.dark .bg-purple-50,
+.admin-dashboard-root.dark .bg-purple-100 {
+  background-color: rgb(107 33 168 / 0.28);
+}
+
+.admin-dashboard-root.dark .bg-violet-50,
+.admin-dashboard-root.dark .bg-violet-100 {
+  background-color: rgb(109 40 217 / 0.28);
+}
+
+.admin-dashboard-root.dark .bg-amber-50,
+.admin-dashboard-root.dark .bg-amber-100,
+.admin-dashboard-root.dark [class~="bg-amber-50/40"],
+.admin-dashboard-root.dark [class~="bg-amber-50/50"],
+.admin-dashboard-root.dark [class~="bg-amber-50/60"] {
+  background-color: rgb(146 64 14 / 0.26);
+}
+
+.admin-dashboard-root.dark .bg-yellow-50,
+.admin-dashboard-root.dark .bg-yellow-100 {
+  background-color: rgb(133 77 14 / 0.26);
+}
+
+.admin-dashboard-root.dark .bg-orange-50,
+.admin-dashboard-root.dark .bg-orange-100 {
+  background-color: rgb(154 52 18 / 0.26);
+}
+
+.admin-dashboard-root.dark .bg-red-50,
+.admin-dashboard-root.dark .bg-red-100,
+.admin-dashboard-root.dark [class~="bg-red-50/40"],
+.admin-dashboard-root.dark [class~="bg-red-50/50"],
+.admin-dashboard-root.dark [class~="bg-red-50/60"] {
+  background-color: rgb(127 29 29 / 0.28);
+}
+
+.admin-dashboard-root.dark .bg-teal-50,
+.admin-dashboard-root.dark .bg-teal-100 {
+  background-color: rgb(17 94 89 / 0.26);
+}
+
+.admin-dashboard-root.dark .border-emerald-100,
+.admin-dashboard-root.dark .border-emerald-200,
+.admin-dashboard-root.dark .border-green-100,
+.admin-dashboard-root.dark .border-green-200 {
+  border-color: rgb(52 211 153 / 0.28);
+}
+
+.admin-dashboard-root.dark .border-blue-100,
+.admin-dashboard-root.dark .border-blue-200 {
+  border-color: rgb(96 165 250 / 0.28);
+}
+
+.admin-dashboard-root.dark .border-purple-100,
+.admin-dashboard-root.dark .border-purple-200,
+.admin-dashboard-root.dark .border-violet-100,
+.admin-dashboard-root.dark .border-violet-200 {
+  border-color: rgb(196 181 253 / 0.28);
+}
+
+.admin-dashboard-root.dark .border-amber-100,
+.admin-dashboard-root.dark .border-amber-200,
+.admin-dashboard-root.dark .border-yellow-100,
+.admin-dashboard-root.dark .border-yellow-200,
+.admin-dashboard-root.dark .border-orange-100,
+.admin-dashboard-root.dark .border-orange-200 {
+  border-color: rgb(251 191 36 / 0.28);
+}
+
+.admin-dashboard-root.dark .border-red-100,
+.admin-dashboard-root.dark .border-red-200 {
+  border-color: rgb(248 113 113 / 0.28);
+}
+
+.admin-dashboard-root.dark .text-emerald-500,
+.admin-dashboard-root.dark .text-emerald-600,
+.admin-dashboard-root.dark .text-emerald-700,
+.admin-dashboard-root.dark .text-green-600,
+.admin-dashboard-root.dark .text-green-700 {
+  color: #6ee7b7;
+}
+
+.admin-dashboard-root.dark .text-blue-500,
+.admin-dashboard-root.dark .text-blue-600,
+.admin-dashboard-root.dark .text-blue-700,
+.admin-dashboard-root.dark .text-indigo-600,
+.admin-dashboard-root.dark .text-indigo-700 {
+  color: #93c5fd;
+}
+
+.admin-dashboard-root.dark .text-purple-500,
+.admin-dashboard-root.dark .text-purple-600,
+.admin-dashboard-root.dark .text-purple-700,
+.admin-dashboard-root.dark .text-violet-600,
+.admin-dashboard-root.dark .text-violet-700 {
+  color: #c4b5fd;
+}
+
+.admin-dashboard-root.dark .text-amber-500,
+.admin-dashboard-root.dark .text-amber-600,
+.admin-dashboard-root.dark .text-amber-700,
+.admin-dashboard-root.dark .text-amber-800,
+.admin-dashboard-root.dark .text-yellow-700,
+.admin-dashboard-root.dark .text-orange-600,
+.admin-dashboard-root.dark .text-orange-700 {
+  color: #fcd34d;
+}
+
+.admin-dashboard-root.dark .text-red-500,
+.admin-dashboard-root.dark .text-red-600,
+.admin-dashboard-root.dark .text-red-700 {
+  color: #fca5a5;
+}
+
+.admin-dashboard-root.dark .text-teal-600,
+.admin-dashboard-root.dark .text-teal-700 {
+  color: #5eead4;
+}
+
+.admin-dashboard-root.dark input,
+.admin-dashboard-root.dark select,
+.admin-dashboard-root.dark textarea {
+  background-color: #191c24;
+  color: var(--color-primary);
+  border-color: var(--dash-border);
+}
+
+.admin-dashboard-root.dark input[readonly],
+.admin-dashboard-root.dark textarea[readonly],
+.admin-dashboard-root.dark input:disabled,
+.admin-dashboard-root.dark select:disabled,
+.admin-dashboard-root.dark textarea:disabled {
+  background-color: #242832;
+  color: color-mix(in srgb, var(--color-primary) 62%, transparent);
+}
+
+.admin-dashboard-root.dark input::placeholder,
+.admin-dashboard-root.dark textarea::placeholder {
+  color: color-mix(in srgb, var(--color-primary) 45%, transparent);
 }
 
 @keyframes truckMove {

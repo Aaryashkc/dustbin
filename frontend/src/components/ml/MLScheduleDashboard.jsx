@@ -323,7 +323,7 @@ const MLScheduleDashboard = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={handleGenerate}
-                    disabled={loading || !isOnline}
+                    disabled={loading}
                     className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-primary text-white hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-2"
                   >
                     {loading && (
@@ -350,8 +350,8 @@ const MLScheduleDashboard = () => {
               </div>
 
               {!isOnline && (
-                <p className="mt-3 text-sm text-red-600">
-                  Start ML service: <code className="bg-red-50 px-1.5 py-0.5 rounded text-xs">cd ml && python main.py</code>
+                <p className="mt-3 text-sm text-amber-700">
+                  ML service is offline; generation will use backend fallback predictions.
                 </p>
               )}
 

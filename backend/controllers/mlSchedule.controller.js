@@ -24,6 +24,142 @@ function getLocalTodayUTC() {
   return new Date(`${yyyy}-${mm}-${dd}T00:00:00.000Z`);
 }
 
+const FALLBACK_AREA_TYPES = {
+  "Kathmandu-Core": "commercial",
+  Baneshwor: "commercial",
+  Koteshwor: "commercial",
+  Balaju: "residential",
+  Maharajgunj: "residential",
+  Budhanilkantha: "suburban",
+  Tokha: "suburban",
+  Chandragiri: "rural",
+  Lalitpur: "commercial",
+  Satdobato: "commercial",
+  Kirtipur: "residential",
+  Imadol: "residential",
+  Lubhu: "suburban",
+  Godawari: "rural",
+  Dakshinkali: "rural",
+  Bhaktapur: "commercial",
+  "Madhyapur Thimi": "residential",
+  Suryabinayak: "suburban",
+  Changunarayan: "rural",
+  Nagarkot: "rural",
+};
+
+function getDayName(dateStr) {
+  return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][
+    new Date(`${dateStr}T00:00:00.000Z`).getUTCDay()
+  ];
+}
+
+function categorizePredictedWaste(kg) {
+  if (kg < 500) return "none";
+  if (kg < 1500) return "low";
+  if (kg < 3500) return "medium";
+  if (kg < 6000) return "high";
+  return "critical";
+}
+
+function fallbackRecommendation(wasteCategory, area, areaType) {
+  const label = areaType || "area";
+  if (wasteCategory === "none") return `Skip ${area} - predicted waste is negligible.`;
+  if (wasteCategory === "low") return `Reduced service for ${area} - assign a light-duty truck.`;
+  if (wasteCategory === "medium") return `Standard service for ${area} - assign a medium-duty truck.`;
+  if (wasteCategory === "high") return `High volume expected in ${area} - assign a heavy-duty truck.`;
+  return `Critical ${label} waste volume expected in ${area} - assign multiple trucks if available.`;
+}
+
+function stableAreaFactor(areaName, dateStr) {
+  const input = `${areaName}:${dateStr}`;
+  let hash = 0;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = (hash * 31 + input.charCodeAt(i)) % 9973;
+  }
+  return 0.9 + (hash % 21) / 100;
+}
+
+function buildBackendFallbackSchedule(dateStr, allAreas = [], unavailableDrivers = []) {
+  const targetDate = new Date(`${dateStr}T00:00:00.000Z`);
+  const month = targetDate.getUTCMonth() + 1;
+  const dayOfWeek = targetDate.getUTCDay();
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+  const seasonFactor = month >= 6 && month <= 9 ? 1.12 : month === 10 || month === 11 ? 1.08 : 1;
+  const weekendFactor = isWeekend ? 1.06 : 1;
+  const baseByType = {
+    commercial: 4300,
+    residential: 2600,
+    suburban: 1700,
+    rural: 950,
+  };
+
+  const areaRows = allAreas.length > 0
+    ? allAreas.map((area) => ({
+        name: area.name,
+        type: area.type || "residential",
+        scaleFactor: area.scaleFactor || 1,
+      }))
+    : Object.entries(FALLBACK_AREA_TYPES).map(([name, type]) => ({
+        name,
+        type,
+        scaleFactor: 1,
+      }));
+
+  let totalPredicted = 0;
+  const districts = areaRows
+    .filter((area) => area.name)
+    .map((area) => {
+      const areaType = area.type || "residential";
+      const base = baseByType[areaType] || baseByType.residential;
+      const predictedWasteKg = Math.max(
+        0,
+        Math.round(base * (area.scaleFactor || 1) * seasonFactor * weekendFactor * stableAreaFactor(area.name, dateStr) * 10) / 10
+      );
+      const wasteCategory = categorizePredictedWaste(predictedWasteKg);
+      totalPredicted += predictedWasteKg;
+
+      return {
+        district: area.name,
+        district_type: areaType,
+        predicted_waste_kg: predictedWasteKg,
+        waste_category: wasteCategory,
+        action: wasteCategory === "none" ? "skip" : "dispatch",
+        recommendation: fallbackRecommendation(wasteCategory, area.name, areaType),
+        is_holiday: false,
+        holiday_name: null,
+        assigned_trucks: [],
+      };
+    })
+    .sort((a, b) => a.district.localeCompare(b.district));
+
+  return {
+    date: dateStr,
+    day_name: getDayName(dateStr),
+    source: "backend_fallback",
+    summary: {
+      total_districts: districts.length,
+      dispatched: districts.filter((d) => d.action === "dispatch").length,
+      skipped: districts.filter((d) => d.action === "skip").length,
+      reduced: 0,
+      total_predicted_waste_kg: Math.round(totalPredicted * 10) / 10,
+      total_trucks_assigned: 0,
+      total_trucks_available: 0,
+      unavailable_drivers: unavailableDrivers,
+    },
+    districts,
+  };
+}
+
+function buildExtraAreas(allAreas = []) {
+  return allAreas
+    .filter((a) => a.type && a.name)
+    .map((a) => ({
+      name: a.name,
+      type: a.type,
+      scale_factor: a.scaleFactor || 1.0,
+    }));
+}
+
 /**
  * Org-aware truck assignment: assigns trucks to areas based on predicted waste,
  * ensuring trucks only go to areas within the SAME org.
@@ -319,23 +455,16 @@ export const generateSchedule = async (req, res) => {
 
     // 3c. Build extra areas list — DB areas that aren't in the ML trained set
     //     These get type-based predictions with scale factors
-    const extraAreas = allAreas
-      .filter((a) => a.type && a.name)
-      .map((a) => ({
-        name: a.name,
-        type: a.type,
-        scale_factor: a.scaleFactor || 1.0,
-      }));
+    const extraAreas = buildExtraAreas(allAreas);
 
     // 4. Call ML service with only driver-assigned trucks + extra areas
-    const result = await mlGenerate(date, trucksWithDrivers, unavailableDrivers || [], extraAreas);
+    let result = await mlGenerate(date, trucksWithDrivers, unavailableDrivers || [], extraAreas);
+    let usedBackendFallback = false;
 
     if (result.fallback) {
-      return res.status(503).json({
-        success: false,
-        message: result.error,
-        detail: result.detail,
-      });
+      usedBackendFallback = true;
+      console.warn(`[MLSchedule] ML service unavailable for ${date}; using backend fallback predictions. Detail: ${result.detail || result.error}`);
+      result = buildBackendFallbackSchedule(date, allAreas, unavailableDrivers || []);
     }
 
     // Org-aware truck assignment: use ML predictions but assign trucks ourselves
@@ -365,8 +494,8 @@ export const generateSchedule = async (req, res) => {
       areas: areasData,
       generatedBy: req.user._id,
       mlModelInfo: {
-        model: "GradientBoosting",
-        r2Score: 0.974,
+        model: usedBackendFallback ? "BackendFallback" : "GradientBoosting",
+        r2Score: usedBackendFallback ? 0 : 0.974,
       },
     });
 
@@ -452,6 +581,14 @@ export const generateSchedule = async (req, res) => {
           date,
           reason: "no_resources",
         },
+      });
+    }
+
+    if (usedBackendFallback) {
+      return res.status(201).json({
+        success: true,
+        message: `Schedule generated with backend fallback because ML service is unavailable - ${trucksWithDrivers.length} trucks with drivers, ${driverlessTrucksList.length} trucks without drivers (excluded)`,
+        data: mlSchedule,
       });
     }
 
@@ -848,15 +985,16 @@ export const autoGenerateMLSchedule = async () => {
       areaOrgMap[a.name.toLowerCase()] = a.orgId?._id?.toString() || null;
       areaOrgNameMap[a.name.toLowerCase()] = a.orgId?.name || null;
     }
+    const extraAreas = buildExtraAreas(allAreas);
 
     // 4. Call ML service
-    const result = await mlGenerate(dateStr, trucksWithDrivers, []);
+    let result = await mlGenerate(dateStr, trucksWithDrivers, [], extraAreas);
+    let usedBackendFallback = false;
 
     if (result.fallback) {
-      return {
-        success: false,
-        message: `ML service unavailable for ${dateStr}: ${result.error}`,
-      };
+      usedBackendFallback = true;
+      console.warn(`[MLSchedule] ML service unavailable for ${dateStr}; using backend fallback predictions. Detail: ${result.detail || result.error}`);
+      result = buildBackendFallbackSchedule(dateStr, allAreas, []);
     }
 
     // Org-aware truck assignment: use ML predictions but assign trucks ourselves
@@ -886,8 +1024,8 @@ export const autoGenerateMLSchedule = async () => {
       areas: areasData,
       generatedBy: null,
       mlModelInfo: {
-        model: "GradientBoosting",
-        r2Score: 0.974,
+        model: usedBackendFallback ? "BackendFallback" : "GradientBoosting",
+        r2Score: usedBackendFallback ? 0 : 0.974,
       },
     });
 
@@ -944,6 +1082,13 @@ export const autoGenerateMLSchedule = async () => {
           reason: "no_resources",
         },
       });
+    }
+
+    if (usedBackendFallback) {
+      return {
+        success: true,
+        message: `Auto-generated fallback schedule for ${dateStr} - ML service unavailable, ${trucksWithDrivers.length} trucks with drivers, ${driverlessTrucksList.length} without`,
+      };
     }
 
     return {

@@ -355,6 +355,7 @@ export const createPickup = async (req, res) => {
       } else {
         io.to("drivers").emit("pickup:created", payload);
       }
+      io.to("admins").emit("pickup:created", payload);
     });
 
     return res.status(201).json({
@@ -660,6 +661,7 @@ export const acceptPickup = async (req, res) => {
         driverName: driverInfo.name,
       });
       io.to("drivers").emit("pickup:accepted", { id: updated._id, status: "ASSIGNED", driverId: driverUser._id });
+      io.to("admins").emit("pickup:accepted", { id: updated._id, status: "ASSIGNED", driverId: driverUser._id });
     });
 
     return res.status(200).json({ message: "Pickup request accepted", pickup: payload });
@@ -746,6 +748,7 @@ export const cancelPickup = async (req, res) => {
       if (updated.driverId) {
         io.to(`driver:${updated.driverId}`).emit("pickup:cancelled", { id: updated._id });
       }
+      io.to("admins").emit("pickup:cancelled", { id: updated._id, status: "CANCELLED" });
     });
 
     return res.status(200).json({ message: "Pickup request cancelled", pickup: payload });
@@ -871,6 +874,13 @@ export const updatePickupStatus = async (req, res) => {
         pickupId: updated._id,
         status: newStatus,
         driverInfo: updated.driverInfo,
+      });
+      io.to("admins").emit("pickup:statusUpdate", {
+        id: updated._id,
+        pickupId: updated._id,
+        status: newStatus,
+        orgId: updated.orgId,
+        ...(newStatus === "COMPLETED" && { completedAt: updated.completedAt }),
       });
     });
 

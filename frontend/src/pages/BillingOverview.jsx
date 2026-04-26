@@ -44,6 +44,7 @@ export default function BillingOverview() {
     adminLoading,
     fetchBillingOverview,
     waiveBill,
+    generateBills,
     billingConfigs,
     activeFees,
     defaults,
@@ -62,6 +63,16 @@ export default function BillingOverview() {
   const [feeOrgId, setFeeOrgId] = useState("global");
   const [savingConfig, setSavingConfig] = useState(false);
   const [configMsg, setConfigMsg] = useState(null);
+  const [generatingBills, setGeneratingBills] = useState(false);
+  const [generationMsg, setGenerationMsg] = useState(null);
+
+  const currentOverviewParams = (extra = {}) => {
+    const params = { billedRole: roleTab, ...extra };
+    if (filters.status) params.status = filters.status;
+    if (filters.month) params.month = filters.month;
+    if (filters.year) params.year = filters.year;
+    return params;
+  };
 
   // Load data on mount + when roleTab changes
   useEffect(() => {
@@ -69,11 +80,7 @@ export default function BillingOverview() {
   }, [fetchBillingConfig]);
 
   useEffect(() => {
-    const params = { billedRole: roleTab };
-    if (filters.status) params.status = filters.status;
-    if (filters.month) params.month = filters.month;
-    if (filters.year) params.year = filters.year;
-    fetchBillingOverview(params);
+    fetchBillingOverview(currentOverviewParams());
   }, [roleTab, fetchBillingOverview]);
 
   // Pre-fill fee inputs when config loads
@@ -85,11 +92,7 @@ export default function BillingOverview() {
   }, [activeFees?.customerFee, activeFees?.adminFee]);
 
   const applyFilters = () => {
-    const params = { billedRole: roleTab };
-    if (filters.status) params.status = filters.status;
-    if (filters.month) params.month = filters.month;
-    if (filters.year) params.year = filters.year;
-    fetchBillingOverview(params);
+    fetchBillingOverview(currentOverviewParams());
   };
 
   const handleWaive = async (billingId) => {
@@ -99,11 +102,26 @@ export default function BillingOverview() {
   };
 
   const goToPage = (page) => {
-    const params = { billedRole: roleTab, page };
-    if (filters.status) params.status = filters.status;
-    if (filters.month) params.month = filters.month;
-    if (filters.year) params.year = filters.year;
-    fetchBillingOverview(params);
+    fetchBillingOverview(currentOverviewParams({ page }));
+  };
+
+  const handleGenerateBills = async () => {
+    setGeneratingBills(true);
+    setGenerationMsg(null);
+    const result = await generateBills(currentOverviewParams());
+    setGeneratingBills(false);
+    if (result.success) {
+      setGenerationMsg({
+        type: "success",
+        text: result.message || "Monthly bills generated",
+      });
+    } else {
+      setGenerationMsg({
+        type: "error",
+        text: result.error || "Failed to generate bills",
+      });
+    }
+    setTimeout(() => setGenerationMsg(null), 5000);
   };
 
   const handleSaveConfig = async () => {
@@ -125,11 +143,7 @@ export default function BillingOverview() {
       if (result.success) {
         setConfigMsg({ type: "success", text: "Fees updated successfully" });
         // Refresh billing overview to reflect new fees
-        const params = { billedRole: roleTab };
-        if (filters.status) params.status = filters.status;
-        if (filters.month) params.month = filters.month;
-        if (filters.year) params.year = filters.year;
-        fetchBillingOverview(params);
+        fetchBillingOverview(currentOverviewParams());
       } else {
         setConfigMsg({ type: "error", text: result.error || "Failed to save" });
       }
@@ -157,6 +171,14 @@ export default function BillingOverview() {
         </div>
         <div className="flex gap-3">
           <button
+            onClick={handleGenerateBills}
+            disabled={generatingBills}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition disabled:opacity-50"
+          >
+            <Receipt size={16} />
+            {generatingBills ? "Generating..." : "Generate Monthly Bills"}
+          </button>
+          <button
             onClick={() => setShowConfig(!showConfig)}
             className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition ${
               showConfig
@@ -169,6 +191,16 @@ export default function BillingOverview() {
           </button>
         </div>
       </div>
+
+      {generationMsg && (
+        <div className={`rounded-xl border px-4 py-3 text-sm font-medium ${
+          generationMsg.type === "success"
+            ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+            : "bg-red-50 border-red-200 text-red-700"
+        }`}>
+          {generationMsg.text}
+        </div>
+      )}
 
       {/* ── Fee Configuration Panel ── */}
       {showConfig && (
